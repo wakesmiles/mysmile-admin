@@ -11,6 +11,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
+    // put the navbar somewhere in layout.tsx
     <html lang="en">
       <body>{children}</body>
     </html>
