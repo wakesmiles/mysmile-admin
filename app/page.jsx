@@ -10,28 +10,62 @@ export default function Home() {
 
   useEffect(() => {
     const fetchPeople = async() => {
-      const { data, error } = await supabase
+      try {
+        await supabase
         .from("profiles")
         .select()
+        .then((profile, err) => {
+          if (profile) {
+            console.log(profile)
+          } else {
+            console.log("error in profiles")
+          }
+        })
+        .then((user) => {
+          setPeople(user)
+        })
+        .then(console.log("this is profiles"))
 
-        if (error) {
-          setFetchError('Could not fetch people')
-          setPeople(null)
-          console.log(error)
-        }
+        await supabase
+          .from("signups")
+          .select()
+          .then((signups, err) => {
+            if (signups) {
+              console.log(signups)
+            } else {
+              console.log("error in signups")
+            }
+          })
+          .then(console.log("this is signups"))
 
-        if (data) {
-          setPeople(data)
-          setFetchError(null)
-        }
+          await supabase
+          .from("shifts")
+          .select()
+          .then((shifts, err) => {
+            if (shifts) {
+              console.log(shifts)
+            } else {
+              console.log("error in shifts")
+            }
+          })
+          .then(console.log("this is shifts"))
+      } catch (err) {
+        console.log("caught error")
+      }
+
     }
 
     fetchPeople()
   })
 
-  console.log(people)
+  if (people) {
+    console.log(people)
+  }
 
   return (
-    <h1>Hello World</h1>
+    <div>
+      <h1>Hello World</h1>
+      {/* <p>{people && people[0].first_name}</p> */}
+    </div>
   )
 }
