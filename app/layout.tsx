@@ -11,9 +11,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    // put the navbar somewhere in layout.tsx
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <h1>Hello World</h1>
+        {children}
+      </body>
     </html>
   )
 }

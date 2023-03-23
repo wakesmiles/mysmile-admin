@@ -15,8 +15,8 @@ const Login = () => {
 
         await supabase.auth
             .signInWithPassword({
-                email: 'ak@fake.com',
-                password: 'finalfake'
+                email: 'banbim@banbim.com',
+                password: 'banbim'
             })
             .then(({data, error}) => {
                 if (error) {
