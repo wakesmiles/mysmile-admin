@@ -103,6 +103,7 @@ export default function Home() {
       fetchPeople()
     }, [])
 
+    // If user is not admin or trying to access this without logging in, only show this
     if (!user) {
         return (
             <>
@@ -122,6 +123,8 @@ export default function Home() {
     return (
       <div>
         <button onClick={() => logout()}>Logout</button>
+
+        {/* Display data for "Profiles" table*/}
         {people ? (
           <>
             <h2>We have people</h2>
@@ -156,6 +159,7 @@ export default function Home() {
         )
         }
   
+        {/* Display data for "Signups" table*/}
         {signups ? (
           <>
             <h2>We have signups</h2>
@@ -193,6 +197,7 @@ export default function Home() {
         )
         }
   
+        {/* Display data for "Shifts" table*/}
         {shifts ? (
           <>
             <h2>We have shifts</h2>
