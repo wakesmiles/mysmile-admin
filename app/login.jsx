@@ -11,12 +11,13 @@ const Login = () => {
     const router = useRouter()
 
     const login = async (e) => {
+        e.preventDefault()
         let success = false
 
         await supabase.auth
             .signInWithPassword({
-                email: 'banbim@banbim.com',
-                password: 'banbim'
+                email: emailRef.current.value,
+                password: passwordRef.current.value,
             })
             .then(({data, error}) => {
                 if (error) {
@@ -29,9 +30,17 @@ const Login = () => {
     }
 
     return(
-        <>
-            <button onClick={(e) => login(e)}>Login</button>
-        </>
+        <div>
+            <form method="POST" onSubmit={(e) => login(e)}>
+                <div>
+                    <label>Email</label>
+                    <input ref={emailRef} name="email" type="email" autoComplete="email" required></input>
+                    <label>Password</label>
+                    <input ref={passwordRef} name="password" type="password" autoComplete="password" required></input>
+                    <button type="submit">Login</button>
+                </div>
+            </form>
+        </div>
     )
 }
 
