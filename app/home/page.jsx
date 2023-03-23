@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 export default function Home() {
+    const [user, setUser] = useState(null)
     const [people, setPeople] = useState(null)  // example of profiles for use in frontend instead of just console.log
     const [signups, setSignups] = useState(null)
     const [shifts, setShifts] = useState(null)
@@ -13,7 +14,6 @@ export default function Home() {
     useEffect(() => {
       const fetchPeople = async() => {
         try {
-  
           // checked if the logged in user is registered in the "admin" table
           await supabase.auth.getUser().then(async (data, err) => {
             if (data) {
@@ -23,8 +23,8 @@ export default function Home() {
               .eq("id", data.data.user.id)
               .then((admin, err) => {
                 if (admin.data.length !== 0) {  // checks if logged in user is registered in the admin table
-                  console.log(admin)
                   console.log("this user is an admin")
+                  setUser(admin)
                 } else {
                   console.log("this user is not an admin or does not exist in our DB")
                 }
@@ -102,6 +102,14 @@ export default function Home() {
       }
       fetchPeople()
     }, [])
+
+    if (!user) {
+        return (
+            <>
+                <h2>Ur not an admin bruh</h2>
+            </>
+        )
+    }
 
     const logout = async () => {
         let success = false
