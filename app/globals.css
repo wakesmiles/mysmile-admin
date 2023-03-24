@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Idk why tailwind is not working on the jsx files, so I'm doing regular CSS here */
+
+
