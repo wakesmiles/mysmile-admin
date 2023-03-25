@@ -2,7 +2,7 @@
 import { useMemo } from 'react'
 import MaterialReactTable from "material-react-table";
 
-import '../../styles/profiletable.css'
+import '../../styles/table.css'
 
 const Profiletable = ( {profiles} ) => {
     
@@ -54,10 +54,10 @@ const Profiletable = ( {profiles} ) => {
     );
 
     return (
-        <div>
-          <h2>Profiles Table</h2>
-          <MaterialReactTable columns={columns} data={profiles_oriented} />;
-        </div>
+      <div>
+        <h2>Profiles Table</h2>
+        <MaterialReactTable columns={columns} data={profiles_oriented} />;
+      </div>
     )
 }
 

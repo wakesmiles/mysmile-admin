@@ -112,6 +112,7 @@ export default function Home() {
   
     // NOTE: According to https://stackoverflow.com/questions/66729498/next-js-is-not-rendering-css-in-server-side-rendering
     // If you are not in production, the CSS/styles will not be loaded on the first fetch (refresh to see)
+    
     return (
       <div>
         <button onClick={() => logout()}>Logout</button>
@@ -126,7 +127,7 @@ export default function Home() {
         {/* <p>Content is: {content}</p> */}
  
         {content === 'Profiles' && <Profiletable profiles={people} />}
-        {content === 'Signups' && <Signuptable signups={signups} /> }
+        {content === 'Signups' && <Signuptable signups={signups} shifts={shifts}/> }
         {content === 'Shifts' && <Shiftstable signups={signups} shifts={shifts} /> }
 
       </div>
