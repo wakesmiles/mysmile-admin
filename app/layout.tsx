@@ -1,4 +1,4 @@
-import './globals.css'
+import '../styles/globals.css'
 
 export const metadata = {
   title: 'MySmile - Admin',
@@ -13,8 +13,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {/* <h1>Hello World</h1> */}
-        {children}
+        {/* Put Next header here */}
+        <main>
+          {children}
+        </main>
       </body>
     </html>
   )

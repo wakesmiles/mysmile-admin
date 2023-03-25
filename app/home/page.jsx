@@ -1,21 +1,72 @@
 'use client'
-
-import { supabase } from '../../supabaseClient';
+import { supabase } from '../../supabaseClient'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
+import Reroute from '../components/reroute'
+import Loading from '../loading'
+import Profiletable from '../components/profiletable'
+import Signuptable from '../components/signuptable'
+import Shiftstable from '../components/shiftstable'
+
+import "../../styles/homepage.css"
+
 export default function Home() {
     const [user, setUser] = useState(null)
-    const [people, setPeople] = useState(null)  // example of profiles for use in frontend instead of just console.log
+    const [people, setPeople] = useState(null)  
     const [signups, setSignups] = useState(null)
     const [shifts, setShifts] = useState(null)
+    const [isLoading, setIsLoading] = useState(true)
+    const [content, setContent] = useState("None")
     const router = useRouter()
+
+    const fetchProfiles = async () => {
+      await supabase
+      .from("profiles")
+      .select()
+      .then((profiles, err) => {
+        if (profiles) {
+          setPeople(profiles)
+        } else {
+          console.log("error in profiles")
+        }
+      })
+      .then(console.log("this is profiles"))
+    }
+
+    const fetchSignups = async () => {
+      await supabase
+      .from("signups")
+      .select()
+      .then((signups, err) => {
+        if (signups) {
+          setSignups(signups)
+        } else {
+          console.log("error in signups")
+        }
+      })
+      .then(console.log("this is signups"))
+    }
+
+    const fetchShifts = async () => {
+      await supabase
+      .from("shifts")
+      .select()
+      .then((shifts, err) => {
+        if (shifts) {
+          setShifts(shifts)
+        } else {
+          console.log("error in shifts")
+        }
+      })
+      .then(console.log("this is shifts"))
+    }
   
-    useEffect(() => {
-      const fetchPeople = async() => {
+    useEffect(() => {  // 모든 테이블 정보 한 번에 얻기
+      const fetchTables = async() => {
         try {
-          // checked if the logged in user is registered in the "admin" table
-          await supabase.auth.getUser().then(async (data, err) => {
+          setIsLoading(true)
+          await supabase.auth.getUser().then(async (data, err) => {  // 이용자가 관리자인지 확인
             if (data) {
               await supabase
               .from("admins")
@@ -26,212 +77,58 @@ export default function Home() {
                   console.log("this user is an admin")
                   setUser(admin)
                 } else {
-                  console.log("this user is not an admin or does not exist in our DB")
+                  console.log("this user is not an admin")
                 }
               })
             }
           }) 
-  
-          // get all entries in the "profiles" table
-          await supabase
-          .from("profiles")
-          .select()
-          .then((profiles, err) => {
-            if (profiles) {
-            //   console.log(profiles)
-              setPeople(profiles)
-            } else {
-              console.log("error in profiles")
-            }
-          })
-          .then(console.log("this is profiles"))
-  
-          // get all entries in the "signups" table
-          await supabase
-            .from("signups")
-            .select()
-            .then((signups, err) => {
-              if (signups) {
-                // console.log(signups)
-                setSignups(signups)
-              } else {
-                console.log("error in signups")
-              }
-            })
-            .then(console.log("this is signups"))
-  
-          // get all entries in the "shifts" table
-          await supabase
-            .from("shifts")
-            .select()
-            .then((shifts, err) => {
-              if (shifts) {
-                // console.log(shifts)
-                setShifts(shifts)
-              } else {
-                console.log("error in shifts")
-              }
-            })
-            .then(console.log("this is shifts"))
-  
-          // to add to tables... (this is from old project, so won't work for this one yet)
-          // await supabase
-          //     .from("signups")  // select between (profile, signups, shifts)
-          //     .insert({  // (check the schema of each table)
-          //       user_id: user.id,
-          //       first_name: user.first_name,
-          //       last_name: user.last_name,
-          //       email: user.email,
-          //       shift_id: s.id,
-          //     })
-          //     .then(() => {
-          //       success = true;
-          //     });
-          // });
-  
-          // to delete data from a table... (this is from old project, so won't work for this one yet)
-          // await supabase
-          // .from("signups")
-          // .delete()
-          // .eq("shift_id", s.shift_id)
-          // .eq("user_id", uid);
-  
+          fetchProfiles()
+          fetchSignups()
+          fetchShifts()
         } catch (err) {
           console.log("caught error")
+        } finally {
+          setIsLoading(false)
         }
       }
-      fetchPeople()
+      fetchTables()
     }, [])
 
-    // If user is not admin or trying to access this without logging in, only show this
-    if (!user) {
-        return (
-            <>
-                <h2>Ur not an admin bruh</h2>
-            </>
-        )
+    const logout = async () => {
+      let success = false
+      await supabase.auth.signOut().then(() => {
+          success = true
+      })
+      if (success) router.push("/")
     }
 
-    const logout = async () => {
-        let success = false
-        await supabase.auth.signOut().then(() => {
-            success = true
-        })
-        if (success) router.push("/")
+    if (isLoading || !people || !signups || !shifts) {  // 한 가지라도 로드 안 됐으면...
+      return <Loading />  
+    }
+
+    if (!user) {  // 이용자가 관리자 않이라서 쫓겨난 경우
+        return <Reroute />  
     }
   
+    // NOTE: According to https://stackoverflow.com/questions/66729498/next-js-is-not-rendering-css-in-server-side-rendering
+    // If you are not in production, the CSS/styles will not be loaded on the first fetch (refresh to see)
     return (
       <div>
         <button onClick={() => logout()}>Logout</button>
 
-        {/* Display data for "Profiles" table*/}
-        {people ? (
-          <>
-            <h2>We have people</h2>
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Email</th>
-                </tr>
-              </thead>
-              <tbody>
-                {people.data.map((person) => (
-                  <>
-                    <tr key={person.id}>
-                      <td>{person.id}</td>
-                      <td>{person.first_name}</td>
-                      <td>{person.last_name}</td>
-                      <td>{person.email}</td>
-                      <button>Check</button>
-                    </tr>
-                  </>
-                ))}
-              </tbody>
-            </table>
-          </>
-        ) : (
-          <>
-            <h2>We DONT GOT people</h2>
-          </>
-        )
-        }
-  
-        {/* Display data for "Signups" table*/}
-        {signups ? (
-          <>
-            <h2>We have signups</h2>
-            <table>
-              <thead>
-                <tr>
-                  <th>Shift ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Clock In</th>
-                  <th>Clock Out</th>
-                  <th>Hours</th>
-                </tr>
-              </thead>
-              <tbody>
-                {signups.data.map((signup) => (
-                  <>
-                    <tr key={signup.id}>
-                      <td>{signup.shift_id}</td>
-                      <td>{signup.first_name}</td>
-                      <td>{signup.last_name}</td>
-                      <td>{signup.clock_in}</td>
-                      <td>{signup.clock_out}</td>
-                      <td>{signup.hours}</td>
-                    </tr>
-                  </>
-                ))}
-              </tbody>
-            </table>
-          </>
-        ) : (
-          <>
-            <h2>We DONT GOT people</h2>
-          </>
-        )
-        }
-  
-        {/* Display data for "Shifts" table*/}
-        {shifts ? (
-          <>
-            <h2>We have shifts</h2>
-            <table>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Type</th>
-                  <th>Start Time</th>
-                  <th>End Time</th>
-                  <th>Rem. Slots</th>
-                </tr>
-              </thead>
-              <tbody>
-                {shifts.data.map((shift) => (
-                  <>
-                    <tr key={shift.id}>
-                      <td>{shift.shift_date}</td>  {/*} put the custom sort function */}
-                      <td>{shift.shift_type}</td>
-                      <td>{shift.start_time}</td>
-                      <td>{shift.end_time}</td>
-                      <td>{shift.remaining_slots}</td>
-                    </tr>
-                  </>
-                ))}
-              </tbody>
-            </table>
-          </>
-        ) : (
-          <>
-            <h2>We DONT GOT people</h2>
-          </>
-        )
-        }
+        <div>
+          <button onClick={() => setContent("Profiles")}>Profiles</button>
+          <button onClick={() => setContent("Signups")}>Signups</button>
+          <button onClick={() => setContent("Shifts")}>Shifts</button>
+          <button onClick={() => setContent("None")}>Hide all tables</button>
+        </div>
+        
+        {/* <p>Content is: {content}</p> */}
+ 
+        {content === 'Profiles' && <Profiletable profiles={people} />}
+        {content === 'Signups' && <Signuptable signups={signups} /> }
+        {content === 'Shifts' && <Shiftstable signups={signups} shifts={shifts} /> }
+
       </div>
     )
 }

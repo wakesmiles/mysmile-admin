@@ -3,7 +3,7 @@
 import { useRef } from "react"
 import { useRouter } from "next/navigation"
 import { supabase } from "../supabaseClient"
-import "./login.css"
+import "../styles/login.css"
 
 const Login = () => {
 
@@ -34,31 +34,31 @@ const Login = () => {
         <div className="body"> 
             <div className="section">  
 
-                {/* 못생겨서 취소 */}
+                {/* 🤮 못생겨서 취소 🤮  */}
                 {/* <div className="color"></div> 
                 <div className="color"></div>
                 <div className="color"></div> 
                 <div className="color"></div> */}
 
-                <div className="box"> 
+                <div className="login-box"> 
 
-                    <div class="square"></div>
-                    <div class="square"></div>
-                    <div class="square"></div>
-                    <div class="square"></div>
-                    <div class="square"></div>
+                    <div class="login-square"></div>
+                    <div class="login-square"></div>
+                    <div class="login-square"></div>
+                    <div class="login-square"></div>
+                    <div class="login-square"></div>
 
-                    <div className="container">
-                        <div className="form"> 
+                    <div className="login-container">
+                        <div className="login-form"> 
                             <h2>MySmile Admin Portal</h2>
-                            <form className="formbox" method="POST" onSubmit={(e) => login(e)}>
-                                <div className="inputBox">
+                            <form className="login-formbox" method="POST" onSubmit={(e) => login(e)}>
+                                <div className="login-inputBox">
                                     <input ref={emailRef} name="email" type="email" autoComplete="email" placeholder="Email" required></input>
                                 </div>
-                                <div className="inputBox">
+                                <div className="login-inputBox">
                                     <input ref={passwordRef} name="password" type="password" autoComplete="password" placeholder="Password" required></input>
                                 </div>
-                                <div className="inputBox submitbtn">
+                                <div className="login-inputBox submitbtn">
                                     <input type="submit" value="Login"></input>
                                 </div>
                             </form>
