@@ -1,0 +1,46 @@
+.profile-tablecontainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.profile-tablecontainer table {
+    border: 1px solid black;
+    table-layout: auto;
+    width: 90%;
+}
+
+.profile-tablecontainer th {
+    background-color: gray;
+}
+
+.profile-tablecontainer thead th:nth-child(1) {
+    width: 25%;
+}
+
+.profile-tablecontainer thead th:nth-child(2) {
+    width: 25%;
+}
+
+.profile-tablecontainer thead th:nth-child(3) {
+    width: 40%;
+}
+
+.profile-tablecontainer thead th:nth-child(4) {
+    width: 10%;
+}
+
+.profile-tablecontainer th, td {
+    padding: 10px;
+    text-align: center;
+}
+
+.profile-tablecontainer tr {
+    border-color: none;
+}
+
+.profile-tablecontainer tr:nth-child(even) {
+    background-color: rgb(188, 188, 188);
+}
