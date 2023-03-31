@@ -8,6 +8,7 @@ import Loading from "../loading";
 import Profiletable from "../components/profiletable";
 import Signuptable from "../components/signuptable";
 import Shiftstable from "../components/shiftstable";
+import Navbar from "../components/navbar";
 import "../../styles/homepage.css";
 
 export default function Home() {
@@ -62,12 +63,12 @@ export default function Home() {
   };
 
   useEffect(() => {
-    // 모든 테이블 정보 한 번에 얻기
+    // Get all table information at once
     const fetchTables = async () => {
       try {
         setIsLoading(true);
         await supabase.auth.getUser().then(async (data, err) => {
-          // 이용자가 관리자인지 확인
+          // Check if the user is an admin
           if (data) {
             await supabase
               .from("admins")
@@ -110,7 +111,7 @@ export default function Home() {
   }
 
   if (!user) {
-    // 이용자가 관리자 않이라서 쫓겨난 경우
+    // Send the user here if they are not admin
     return <Reroute />;
   }
 
@@ -119,14 +120,15 @@ export default function Home() {
 
   return (
     <div>
-      {/* make a side navbar for  */}
+      {/* make a side navbar */}
+      <Navbar content={setContent}/>
       <button onClick={() => logout()}>Logout</button>
-
+      
       <div>
-        <button onClick={() => setContent("Profiles")}>Profiles</button>
-        <button onClick={() => setContent("Signups")}>Signups</button>
+        {/* <button onClick={() => setContent("Profiles")}>Profiles</button> */}
+        {/* <button onClick={() => setContent("Signups")}>Signups</button>
         <button onClick={() => setContent("Shifts")}>Shifts</button>
-        <button onClick={() => setContent("None")}>Hide all tables</button>
+        <button onClick={() => setContent("None")}>Hide all tables</button> */}
       </div>
       {/* <p>Content is: {content}</p> */}
 
