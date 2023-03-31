@@ -119,26 +119,20 @@ export default function Home() {
   // If you are not in production, the CSS/styles will not be loaded on the first fetch (refresh to see)
 
   return (
-    <div>
+    <div className="flex">
       {/* make a side navbar */}
-      <Navbar content={setContent}/>
-      <button onClick={() => logout()}>Logout</button>
-      
-      <div>
-        {/* <button onClick={() => setContent("Profiles")}>Profiles</button> */}
-        {/* <button onClick={() => setContent("Signups")}>Signups</button>
-        <button onClick={() => setContent("Shifts")}>Shifts</button>
-        <button onClick={() => setContent("None")}>Hide all tables</button> */}
-      </div>
-      {/* <p>Content is: {content}</p> */}
+      <Navbar setContent={setContent} logout = {logout}/>
 
-      {content === "Profiles" && <Profiletable profiles={people} />}
-      {content === "Signups" && (
-        <Signuptable signups={signups} shifts={shifts} />
-      )}
-      {content === "Shifts" && (
-        <Shiftstable signups={signups} shifts={shifts} />
-      )}
+      <div className="">
+        {content === "Profiles" && <Profiletable profiles={people} />}
+        {content === "Signups" && (
+          <Signuptable signups={signups} shifts={shifts} />
+        )}
+        {content === "Shifts" && (
+          <Shiftstable signups={signups} shifts={shifts} />
+        )}
+      </div> 
+
     </div>
   );
 }
