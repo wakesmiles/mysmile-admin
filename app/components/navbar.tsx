@@ -1,39 +1,43 @@
 import {ReactNode} from 'react'
 
 interface NavProps{
-  content:Function;
+  setContent: Function;
+  logout: Function;
 }
 
 interface ButtonProps{
-  //tableName: String;
   children: ReactNode; 
   onClick: React.MouseEventHandler;
 }
 
-function NavButton(props: ButtonProps) {
+function NavButton({ children, onClick }: ButtonProps): JSX.Element {
   return (
-    <div className="hover:cursor-pointer"
-      onClick={props.onClick}>
-      {props.children}
+    <div className="hover:cursor-pointer text-white text-center py-2 px-4 rounded-md"
+    onClick={onClick}>
+      {children}
     </div>
   );
 }
 
-function Navbar({ content }: NavProps): JSX.Element {
+function Navbar({ setContent, logout }: NavProps): JSX.Element {
   return (
-    <nav>
+    <nav className="bg-blue-800 h-screen w-50 mr-50">
       <ul>
         <li>
-          <NavButton onClick={() => content("Profiles")}>Profiles</NavButton>
+          <NavButton onClick={() => setContent("Profiles")}>Profiles</NavButton>
         </li>       
-         <li>
-          <NavButton onClick={() => content("Signups")}>Signups</NavButton>
+        <li>
+          <NavButton onClick={() => setContent("Signups")}>Signups</NavButton>
         </li>
         <li>
-          <NavButton onClick={() => content("Shifts")}>Shifts</NavButton>
+          <NavButton onClick={() => setContent("Shifts")}>Shifts</NavButton>
         </li>
         <li>
-          <NavButton onClick={() => content("None")}>Hide Tables</NavButton>
+          <NavButton onClick={() => setContent("None")}>Hide Tables</NavButton>
+        </li>
+        <li className="hover:cursor-pointer bg-red-500 hover:bg-red-600 text-white text-center font-bold py-2 px-4 rounded-md mx-1" 
+        onClick = {() => logout()}>
+          Logout
         </li>
       </ul>
     </nav>
