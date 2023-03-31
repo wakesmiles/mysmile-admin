@@ -56,7 +56,7 @@ const Profiletable = ( {profiles} ) => {
     return (
       <div>
         <h2>Profiles Table</h2>
-        <MaterialReactTable columns={columns} data={profiles_oriented} />;
+        <MaterialReactTable columns={columns} data={profiles_oriented} />
       </div>
     )
 }
