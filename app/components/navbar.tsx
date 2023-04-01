@@ -21,8 +21,11 @@ function NavButton({ children, onClick }: ButtonProps): JSX.Element {
 
 function Navbar({ setContent, logout }: NavProps): JSX.Element {
   return (
-    <nav className="bg-blue-800 h-screen w-50 mr-50">
-      <ul>
+    <nav className="bg-blue-800 w-50 mr-50">
+      <ul className="flex">
+        <li>
+          <NavButton onClick={() => setContent("None")}>Home</NavButton>
+        </li>
         <li>
           <NavButton onClick={() => setContent("Profiles")}>Profiles</NavButton>
         </li>       
@@ -31,9 +34,6 @@ function Navbar({ setContent, logout }: NavProps): JSX.Element {
         </li>
         <li>
           <NavButton onClick={() => setContent("Shifts")}>Shifts</NavButton>
-        </li>
-        <li>
-          <NavButton onClick={() => setContent("None")}>Hide Tables</NavButton>
         </li>
         <li className="hover:cursor-pointer bg-red-500 hover:bg-red-600 text-white text-center font-bold py-2 px-4 rounded-md mx-1" 
         onClick = {() => logout()}>

@@ -1,8 +1,20 @@
 'use client'
 import { useCallback, useMemo, useState } from 'react'
 import MaterialReactTable from "material-react-table"
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, Stack, TextField, Tooltip } from '@mui/material'
-import { Delete, Edit } from '@mui/icons-material'
+// import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, Stack, TextField, Tooltip } from '@mui/material'
+// import { Delete, Edit } from '@mui/icons-material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import IconButton from '@mui/material/IconButton'
+import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
+import Tooltip from '@mui/material/Tooltip'
+import Delete from '@mui/icons-material/Delete'
+import Edit from '@mui/icons-material/Edit'
 
 import '../../styles/table.css'
 
@@ -85,10 +97,12 @@ const Signuptable = ( {signups, shifts} ) => {
       {
         accessorKey: 'clock_in',
         header: 'Clock In Time',
+        enableEditing: false,
       },
       {
         accessorKey: 'clock_out',
         header: 'Clock Out Time',
+        enableEditing: false,
       },
       {
         accessorKey: 'hours',

@@ -115,7 +115,7 @@ export default function Home() {
   // If you are not in production, the CSS/styles will not be loaded on the first fetch (refresh to see)
 
   return (
-    <div className="flex">
+    <div className="flex flex-col">
       
       <Navbar setContent={setContent} logout = {logout}/>
 
