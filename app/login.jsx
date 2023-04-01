@@ -39,11 +39,11 @@ const Login = () => {
         <div className="color"></div> */}
 
         <div className="login-box">
-          <div class="login-square"></div>
-          <div class="login-square"></div>
-          <div class="login-square"></div>
-          <div class="login-square"></div>
-          <div class="login-square"></div>
+          <div className="login-square"></div>
+          <div className="login-square"></div>
+          <div className="login-square"></div>
+          <div className="login-square"></div>
+          <div className="login-square"></div>
 
           <div className="login-container">
             <div className="login-form">

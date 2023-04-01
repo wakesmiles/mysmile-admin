@@ -26,7 +26,7 @@ export default function Home() {
       .select()
       .then((profiles, err) => {
         if (profiles) {
-          setPeople(profiles);
+          setPeople(profiles)
         } else {
           console.log("error in profiles")
         }
