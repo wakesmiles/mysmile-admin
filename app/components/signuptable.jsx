@@ -70,7 +70,7 @@ const Signuptable = ( {signups, shifts} ) => {
   return (
     <div>
       <h2>Signups Table</h2>
-      <MaterialReactTable columns={columns} data={data} />;
+      <MaterialReactTable columns={columns} data={data} />
     </div>
     )
 }

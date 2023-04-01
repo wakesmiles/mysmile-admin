@@ -21,7 +21,7 @@ function NavButton({ children, onClick }: ButtonProps): JSX.Element {
 
 function Navbar({ setContent, logout }: NavProps): JSX.Element {
   return (
-    <nav className="bg-blue-800 h-screen w-[200px] mr-50">
+    <nav className="bg-blue-800 h-screen w-50 mr-50">
       <ul>
         <li>
           <NavButton onClick={() => setContent("Profiles")}>Profiles</NavButton>

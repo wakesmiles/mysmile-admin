@@ -73,7 +73,7 @@ const Shiftstable = ( {signups, shifts} ) => {
     return (
         <div>
             <h2>Shifts Table</h2>
-            <MaterialReactTable columns={columns} data={data} />;
+            <MaterialReactTable columns={columns} data={data} />
         </div>
     )
 }
