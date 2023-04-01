@@ -41,7 +41,7 @@ const Signuptable = ( {signups, shifts} ) => {
     obj.start_time = corresponding_shift.start_time
     obj.end_time = corresponding_shift.end_time
 
-    data.push(obj)
+    data.push(obj)  
   })
 
   console.log(data)
@@ -147,7 +147,7 @@ const Signuptable = ( {signups, shifts} ) => {
           </Box>
         )}
         renderTopToolbarCustomActions={() => (
-          <Button color="secondary" onClick={() => setCreateModalOpen(true)} variant="contained">Create New Account</Button>
+          <Button color="secondary" onClick={() => setCreateModalOpen(true)} variant="contained">Create New Signup</Button>
         )}
       />
       {/* 이름은 CreateNewAccountModal 인데, 사실은 신규 signup 만드는 component */}
@@ -193,7 +193,7 @@ export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
       </DialogContent>
       <DialogActions sx={{ p: '1.25rem' }}>
         <Button onClick={onClose}>Cancel</Button>
-        <Button color="secondary" onClick={handleSubmit} variant="contained">Create New Account</Button>
+        <Button color="secondary" onClick={handleSubmit} variant="contained">Create New Signup</Button>
       </DialogActions>
     </Dialog>
   )

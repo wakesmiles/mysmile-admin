@@ -29,7 +29,7 @@ const Profiletable = ( {profiles} ) => {
     
   // 원래 받던 데이타에서 오리엔테이션 필드가 boolean 인데, string 으로 바꿔야 테이블에 나타난다
   const profiles_oriented = profiles.data.map(obj => {
-    let data = {...obj, orientation: obj.orientation.toString()}
+    let data = {...obj, orientation: obj.orientation.toString()} 
     return data
   })
   console.log(profiles_oriented)
