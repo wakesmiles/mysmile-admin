@@ -1,6 +1,7 @@
 'use client'
 import { useCallback, useMemo, useState } from 'react'
 import MaterialReactTable from "material-react-table"
+import Loading from '../loading'
 
 // According to MUI docs this imports faster than doing: import { Box, Button, ... } from '@mui/material'
 // More info: https://mui.com/material-ui/guides/minimizing-bundle-size/
@@ -175,7 +176,7 @@ const Profiletable = ( {profiles} ) => {
 
   return (
     <div>
-      <h2>Profiles Table</h2>
+      <h2 className="p-4">Profiles Table</h2>
       <MaterialReactTable
         displayColumnDefOptions={{
           'mrt-row-actions': {

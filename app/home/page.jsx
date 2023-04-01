@@ -8,6 +8,7 @@ import Loading from "../loading"
 import Profiletable from "../components/profiletable"
 import Signuptable from "../components/signuptable"
 import Shiftstable from "../components/shiftstable"
+import Defaultpage from "../components/default"
 import Navbar from "../components/navbar"
 import "../../styles/homepage.css"
 
@@ -120,6 +121,7 @@ export default function Home() {
       <Navbar setContent={setContent} logout = {logout}/>
 
       <div className="">
+        {content === "None" && <Defaultpage />}
         {content === "Profiles" && <Profiletable profiles={people} />}
         {content === "Signups" && <Signuptable signups={signups} shifts={shifts} />}
         {content === "Shifts" && <Shiftstable signups={signups} shifts={shifts} />}

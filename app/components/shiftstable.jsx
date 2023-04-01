@@ -116,7 +116,7 @@ const Shiftstable = ( {signups, shifts} ) => {
 
     return (
         <div>
-            <h2>Shifts Table</h2>
+            <h2 className="p-4">Shifts Table</h2>
             <MaterialReactTable 
                 displayColumnDefOptions={{
                     'mrt-row-actions': {
@@ -151,6 +151,7 @@ const Shiftstable = ( {signups, shifts} ) => {
                     <Button color="secondary" onClick={() => setCreateModalOpen(true)} variant="contained">Create New Account</Button>
                 )}
             />
+            {/* 이름은 CreateNewAccountModal 인데, 사실은 신규 shift 만드는 component */}
             <CreateNewAccountModal
                 columns={columns}
                 open={createModalOpen}

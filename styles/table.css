@@ -1,4 +1,4 @@
-.profile-tablecontainer {
+/* .profile-tablecontainer {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -43,4 +43,4 @@
 
 .profile-tablecontainer tr:nth-child(even) {
     background-color: rgb(188, 188, 188);
-}
+} */

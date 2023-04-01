@@ -115,7 +115,7 @@ const Signuptable = ( {signups, shifts} ) => {
 
   return (
     <div>
-      <h2>Signups Table</h2>
+      <h2 className="p-4">Signups Table</h2>
       <MaterialReactTable 
         displayColumnDefOptions={{
           'mrt-row-actions': {
@@ -150,6 +150,7 @@ const Signuptable = ( {signups, shifts} ) => {
           <Button color="secondary" onClick={() => setCreateModalOpen(true)} variant="contained">Create New Account</Button>
         )}
       />
+      {/* 이름은 CreateNewAccountModal 인데, 사실은 신규 signup 만드는 component */}
       <CreateNewAccountModal
         columns={columns}
         open={createModalOpen}
@@ -175,7 +176,7 @@ export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
 
   return (
     <Dialog open={open}>
-      <DialogTitle textAlign="center">Create New Account</DialogTitle>
+      <DialogTitle textAlign="center">Create New Signup</DialogTitle>
       <DialogContent>
         <form onSubmit={(e) => e.preventDefault()}>
           <Stack sx={{width: '100%', minWidth: { xs: '300px', sm: '360px', md: '400px'}, gap: '1.5rem'}}>
