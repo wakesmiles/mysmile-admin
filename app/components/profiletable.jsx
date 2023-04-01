@@ -1,8 +1,9 @@
 'use client'
 import { useCallback, useMemo, useState } from 'react'
 import MaterialReactTable from "material-react-table"
-// import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Stack, TextField, Tooltip } from '@mui/material'
-// import { Delete, Edit } from '@mui/icons-material'
+
+// According to MUI docs this imports faster than doing: import { Box, Button, ... } from '@mui/material'
+// More info: https://mui.com/material-ui/guides/minimizing-bundle-size/
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
