@@ -10,6 +10,8 @@ import Signuptable from "../components/signuptable"
 import Shiftstable from "../components/shiftstable"
 import Defaultpage from "../components/default"
 import Navbar from "../components/navbar"
+import Stats from "../components/stats"
+
 import "../../styles/homepage.css"
 
 export default function Home() {
@@ -21,6 +23,8 @@ export default function Home() {
   const [content, setContent] = useState("None")
   const router = useRouter()
 
+  // For the future, fetchProfiles(), fetchSignups(), and fetchShifts() should be moved to another file 
+  // that is NOT a client component, so they can be rendered on server instead of all on client
   const fetchProfiles = async () => {
     await supabase
       .from("profiles")
@@ -63,7 +67,7 @@ export default function Home() {
       .then(console.log("this is shifts"))
   }
 
-  useEffect(() => { // Get all table information at once
+  useEffect(() => { // Get all table information at once (delete this once the methods here can be moved to server-side rendering)
     const fetchTables = async () => {
       try {
         setIsLoading(true);
@@ -74,8 +78,7 @@ export default function Home() {
               .select()
               .eq("id", data.data.user.id)
               .then((admin, err) => {
-                if (admin.data.length !== 0) {
-                  // checks if logged in user is registered in the admin table
+                if (admin.data.length !== 0) { // check if logged in user is registered in the admin table
                   console.log("this user is an admin")
                   setUser(admin)
                 } else {
@@ -125,6 +128,7 @@ export default function Home() {
         {content === "Profiles" && <Profiletable profiles={people} />}
         {content === "Signups" && <Signuptable signups={signups} shifts={shifts} />}
         {content === "Shifts" && <Shiftstable signups={signups} shifts={shifts} />}
+        {content === "Stats" && <Stats signups={signups} shifts={shifts}/>}
       </div> 
 
     </div>

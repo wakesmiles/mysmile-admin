@@ -22,6 +22,7 @@ import '../../styles/table.css'
 const Signuptable = ( {signups, shifts} ) => {
 
   const [createModalOpen, setCreateModalOpen] = useState(false)
+  // const [validationErrors, setValidationErrors] = useState({})
 
   const data = []
   const signup_data = signups.data
@@ -44,7 +45,7 @@ const Signuptable = ( {signups, shifts} ) => {
     data.push(obj)  
   })
 
-  console.log(data)
+  // console.log(data)
   const [tableData, setTableData] = useState(data)
 
   const handleCreateNewRow = (values) => {
@@ -64,7 +65,8 @@ const Signuptable = ( {signups, shifts} ) => {
   // }
 
   const handleDeleteRow = useCallback(
-    (row) => {
+    (row) => {  // apply the following code to all rows...
+      // check to see if there are other instances in other databases first?
       if (!confirm(`Are you sure you want to delete the shift for ${row.getValue('first_name')} at ${row.getValue('date')} starting at ${row.getValue('start_time')}?`)) return
       // API: delete request
       tableData.splice(row.index, 1)
@@ -73,41 +75,89 @@ const Signuptable = ( {signups, shifts} ) => {
     [tableData],
   )
 
+  // not sure why the code below is not working
+  // const validateRequired = (value) => !!value.length
+  // const getCommonEditTextFieldProps = useCallback(
+  //   (cell) => {
+  //     return {
+  //       error: !!validationErrors[cell.id],
+  //       helperText: validationErrors[cell.id],
+  //       onBlur: (event) => {
+  //         const isValid = validateRequired(event.target.value)  
+  //         if(!isValid) {  // set validation error for cell if invalid
+  //           setValidationErrors({
+  //             ...validationErrors,
+  //             [cell.id]: `${cell.column.columnDef.header} is required`,
+  //           })
+  //         } else { // remove validation error for cell if valid
+  //           delete validationErrors[cell.id]
+  //           setValidationErrors({
+  //             ...validationErrors
+  //           })
+  //         }
+  //       }
+  //     }
+  //   }
+  // )
+
   const columns = useMemo( // 제3자 라이브러리가 필요한 데이타
     () => [
       {
         accessorKey: 'date', 
         header: 'Shift Date',
+        // muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+        //   ...getCommonEditTextFieldProps(cell)
+        // })
       },
       {
         accessorKey: 'start_time',
         header: 'Shift Start Time',
+        // muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+        //   ...getCommonEditTextFieldProps(cell)
+        // })
       },
       {
         accessorKey: 'end_time', 
         header: 'Shift End Time',
+        // muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+        //   ...getCommonEditTextFieldProps(cell)
+        // })
       },
       {
         accessorKey: 'first_name',
         header: 'First Name',
+        // muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+        //   ...getCommonEditTextFieldProps(cell)
+        // })
       },
       {
         accessorKey: 'last_name',
         header: 'Last Name',
+        // muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+        //   ...getCommonEditTextFieldProps(cell)
+        // })
       },
       {
         accessorKey: 'clock_in',
         header: 'Clock In Time',
-        enableEditing: false,
+        // muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+        //   ...getCommonEditTextFieldProps(cell)
+        // })
       },
       {
         accessorKey: 'clock_out',
         header: 'Clock Out Time',
-        enableEditing: false,
+        // muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+        //   ...getCommonEditTextFieldProps(cell)
+        // })
       },
       {
         accessorKey: 'hours',
-        header: 'Hours Volunteered'
+        header: 'Hours Volunteered',
+        // enableEditing: false,  // guessing this is not automatically calculated in Supabase so admin would have to manually update it
+        // muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+        //   ...getCommonEditTextFieldProps(cell)
+        // })
       },
       ],
       [],
@@ -147,7 +197,7 @@ const Signuptable = ( {signups, shifts} ) => {
           </Box>
         )}
         renderTopToolbarCustomActions={() => (
-          <Button color="secondary" onClick={() => setCreateModalOpen(true)} variant="contained">Create New Signup</Button>
+          <Button color="primary" onClick={() => setCreateModalOpen(true)} variant="contained">Create New Signup</Button>
         )}
       />
       {/* 이름은 CreateNewAccountModal 인데, 사실은 신규 signup 만드는 component */}
@@ -180,7 +230,7 @@ export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
       <DialogContent>
         <form onSubmit={(e) => e.preventDefault()}>
           <Stack sx={{width: '100%', minWidth: { xs: '300px', sm: '360px', md: '400px'}, gap: '1.5rem'}}>
-            {columns.map((column) => (
+            {columns.map((column) => ( 
               <TextField
                 key={column.accessorKey}
                 label={column.header}

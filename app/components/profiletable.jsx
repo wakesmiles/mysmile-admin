@@ -32,11 +32,12 @@ const Profiletable = ( {profiles} ) => {
     let data = {...obj, orientation: obj.orientation.toString()} 
     return data
   })
-  console.log(profiles_oriented)
   // vvv get data first, then set to state tableData
   const [tableData, setTableData] = useState(profiles_oriented)
 
   const handleCreateNewRow = (values) => {
+    console.log(values)
+    // API: create request
     tableData.push(values)
     setTableData([...tableData])
   }
@@ -44,7 +45,8 @@ const Profiletable = ( {profiles} ) => {
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
     if (!Object.keys(validationErrors).length) {
       tableData[row.index] = values
-      // API request for update, and refresh code here
+      // API: update request
+      // location.reload() maybe (maybe not necessary for profiles, necessary for other tables)
       setTableData([...tableData])
       exitEditingMode()
     }
@@ -56,6 +58,7 @@ const Profiletable = ( {profiles} ) => {
 
   const handleDeleteRow = useCallback(
     (row) => {
+      // TODO: check signups for this profile. find and delete signups associated with this profile
       if (!confirm(`Are you sure you want to delete ${row.getValue('first_name')}`)) return
       // API: delete request
       tableData.splice(row.index, 1)
@@ -66,8 +69,7 @@ const Profiletable = ( {profiles} ) => {
 
   // validation methods for the edit functionality below
   const validateRequired = (value) => !!value.length
-  const validateAge = (age) => age >= 18
-  const validateEmail = (email) =>
+  const validateEmail = (email) =>  // idk if this actually works
     !!email.length &&
     email
     .toLowerCase()
@@ -83,18 +85,14 @@ const Profiletable = ( {profiles} ) => {
         onBlur: (event) => {
           const isValid =
             cell.column.id === 'email'
-              ? validateEmail(event.target.value)
-              : cell.column.id === 'age'
-              ? validateAge(+event.target.value)
-              : validateRequired(event.target.value)
-          if(!isValid) {
-            // set validation error for cell if invalid
+              ? validateEmail(event.target.value)  // 테이블 열이 email 경우: validateEmail()
+              : validateRequired(event.target.value)  // 테이블 열이 딴겨면: validateRequired()
+          if(!isValid) {  // set validation error for cell if invalid
             setValidationErrors({
               ...validationErrors,
               [cell.id]: `${cell.column.columnDef.header} is required`,
             })
-          } else {
-            // remove validation error for cell if valid
+          } else { // remove validation error for cell if valid
             delete validationErrors[cell.id]
             setValidationErrors({
               ...validationErrors
@@ -208,7 +206,7 @@ const Profiletable = ( {profiles} ) => {
           </Box>
         )}
         renderTopToolbarCustomActions={() => (
-          <Button color="secondary" onClick={() => setCreateModalOpen(true)} variant="contained">Create New Account</Button>
+          <Button color="primary" onClick={() => setCreateModalOpen(true)} variant="contained">Create New Account</Button>
         )}
       />
       <CreateNewAccountModal

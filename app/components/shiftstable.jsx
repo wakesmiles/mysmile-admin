@@ -17,9 +17,10 @@ import Tooltip from '@mui/material/Tooltip'
 import Delete from '@mui/icons-material/Delete'
 import Edit from '@mui/icons-material/Edit'
 import AssignmentIcon from '@mui/icons-material/Assignment'
+import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
+import InsertEmoticon from '@mui/icons-material/InsertEmoticon'
 
 import '../../styles/table.css'
-import { SearchOffTwoTone } from '@mui/icons-material';
 
 const Shiftstable = ( {signups, shifts} ) => {
 
@@ -152,6 +153,7 @@ const Shiftstable = ( {signups, shifts} ) => {
                 }}
                 columns={columns} 
                 data={tableData} 
+                initialState={{ columnVisibility: { id: false } }}  // 기본적으로 id 기둥 숨기기
                 editingMode="modal"
                 enableColumnOrdering
                 enableEditing
@@ -169,7 +171,7 @@ const Shiftstable = ( {signups, shifts} ) => {
                           <Delete />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip arrow placement="right" title="View Volunteers">
+                      <Tooltip arrow placement="right" title="Copy Volunteer Emails">
                         <IconButton onClick={() => {
                           setVolunteerModalOpen(true)
                           handleViewVolunteers(row)
@@ -180,7 +182,7 @@ const Shiftstable = ( {signups, shifts} ) => {
                     </Box>
                 )}
                 renderTopToolbarCustomActions={() => (
-                    <Button color="secondary" onClick={() => setCreateModalOpen(true)} variant="contained">Create New Shift</Button>
+                    <Button color="primary" onClick={() => setCreateModalOpen(true)} variant="contained">Create New Shift</Button>
                 )}
             />
             {/* 이름은 CreateNewAccountModal 인데, 사실은 신규 shift 만드는 component */}
@@ -240,9 +242,12 @@ export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
 export const ViewVolunteerModal = ({ open, onClose }) => {
   return (
     <Dialog open={open}>
-      <div className="p-4">
+      <div className="p-4 flex flex-col justify-center align-middle">
         <h2>Volunteer emails copied to clipboard!</h2>
-        <button onClick={onClose}>X</button>
+        {/* <button onClick={onClose}>X</button> */}
+        <IconButton onClick={onClose}>
+          <InsertEmoticon />
+        </IconButton>
       </div>
     </Dialog>
   )
