@@ -22,7 +22,6 @@ import '../../styles/table.css'
 const Signuptable = ( {signups, shifts} ) => {
 
   const [createModalOpen, setCreateModalOpen] = useState(false)
-  // const [validationErrors, setValidationErrors] = useState({})
 
   const data = []
   const signup_data = signups.data
@@ -61,10 +60,6 @@ const Signuptable = ( {signups, shifts} ) => {
     exitEditingMode()
   }
 
-  // const handleCancelRowEdits = () => {
-  //   setValidationErrors({})
-  // }
-
   const handleDeleteRow = useCallback(
     (row) => {  // apply the following code to all rows...
       // check to see if there are other instances in other databases first?
@@ -75,31 +70,6 @@ const Signuptable = ( {signups, shifts} ) => {
     },
     [tableData],
   )
-
-  // not sure why the code below is not working
-  // const validateRequired = (value) => !!value.length
-  // const getCommonEditTextFieldProps = useCallback(
-  //   (cell) => {
-  //     return {
-  //       error: !!validationErrors[cell.id],
-  //       helperText: validationErrors[cell.id],
-  //       onBlur: (event) => {
-  //         const isValid = validateRequired(event.target.value)  
-  //         if(!isValid) {  // set validation error for cell if invalid
-  //           setValidationErrors({
-  //             ...validationErrors,
-  //             [cell.id]: `${cell.column.columnDef.header} is required`,
-  //           })
-  //         } else { // remove validation error for cell if valid
-  //           delete validationErrors[cell.id]
-  //           setValidationErrors({
-  //             ...validationErrors
-  //           })
-  //         }
-  //       }
-  //     }
-  //   }
-  // )
 
   const columns = useMemo( // 제3자 라이브러리가 필요한 데이타
     () => [
