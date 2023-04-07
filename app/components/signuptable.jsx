@@ -30,6 +30,7 @@ const Signuptable = ( {signups, shifts} ) => {
 
   signup_data.forEach(signup => {  // 데이터 정리
     let obj = {}
+    obj.id = signup.id
     obj.first_name = signup.first_name
     obj.last_name = signup.last_name
     obj.clock_in = signup.clock_in ?? "" // 만약에 null 이면 오류, 빈 따옴표로 변경하면 해결됌
@@ -45,7 +46,7 @@ const Signuptable = ( {signups, shifts} ) => {
     data.push(obj)  
   })
 
-  // console.log(data)
+  console.log(data)
   const [tableData, setTableData] = useState(data)
 
   const handleCreateNewRow = (values) => {

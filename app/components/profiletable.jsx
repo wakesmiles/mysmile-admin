@@ -24,7 +24,6 @@ import '../../styles/table.css'
 
 const Profiletable = ( {profiles} ) => {
   
-  const [createModalOpen, setCreateModalOpen] = useState(false)
   const [validationErrors, setValidationErrors] = useState({})
     
   // 원래 받던 데이타에서 오리엔테이션 필드가 boolean 인데, string 으로 바꿔야 테이블에 나타난다
@@ -34,12 +33,13 @@ const Profiletable = ( {profiles} ) => {
   })
   // vvv get data first, then set to state tableData
   const [tableData, setTableData] = useState(profiles_oriented)
+  // console.log(tableData)
 
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
     if (!Object.keys(validationErrors).length) {
       tableData[row.index] = values
       // API: update request
-      // location.reload() maybe (maybe not necessary for profiles, necessary for other tables)
+      // location.reload() maybe not necessary for profiles, necessary for other tables)
       setTableData([...tableData])
       exitEditingMode()
     }
