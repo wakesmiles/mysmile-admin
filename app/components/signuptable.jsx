@@ -28,6 +28,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
   const [apiResponse, setApiResponse] = useState("")
 
   const data = []
+  const profiles_data = profiles.data
   const signup_data = signups.data
   const shifts_data = shifts.data
 
@@ -66,7 +67,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
     console.log(shift_for_given_date)  // get the shiftid of this field
 
     // find user for given id
-    let volunteer_for_given_info = profiles.data.filter(vol => (vol.first_name === values.first_name && vol.last_name === values.last_name && vol.email === values.email))[0]
+    let volunteer_for_given_info = profiles_data.filter(vol => (vol.first_name === values.first_name && vol.last_name === values.last_name && vol.email === values.email))[0]
     // console.log(volunteer_for_given_info.id)
 
     const new_signup = {
@@ -108,10 +109,36 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
     tableData.push(values)
     setTableData([...tableData])
   }
+  
+  async function update(values) {
+    let new_user = profiles_data.filter(profile => (profile.email === values.email && profile.first_name === values.first_name && profile.last_name === values.last_name))[0]
+    let post_obj = {}
+    post_obj.user_id = new_user ? new_user.id : 404
+    post_obj.first_name = values.first_name
+    post_obj.last_name = values.last_name
+    post_obj.email = values.email
+    if (values.clock_in !== "" && values.clock_in !== "") { 
+      post_obj.clock_in = values.clock_in
+      post_obj.clock_out = values.clock_out
+    }
+    console.log(post_obj)
+    try {
+      const { error } = await supabase.from("signups").update(post_obj).eq("id", values.id)
+      if (error) {
+        setApiMsgOpen(true)
+        setApiResponse(error.message)
+      } else {
+        setApiMsgOpen(true)
+        setApiResponse("Success!")
+      }
+    } catch (error) {
+      console.log(error.message)
+    }
+  }
 
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
     tableData[row.index] = values
-    // API request for update, and refresh code here
+    update(values)  // API request for update
     setTableData([...tableData])
     exitEditingMode()
   }
@@ -130,16 +157,24 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
   const columns = useMemo( // 제3자 라이브러리가 필요한 데이타
     () => [
       {
+        accessorKey: 'id',
+        header: 'Signup ID',
+        enableEditing: false
+      },
+      {
         accessorKey: 'date', 
         header: 'Shift Date',
+        enableEditing: false
       },
       {
         accessorKey: 'start_time',
         header: 'Shift Start Time',
+        enableEditing: false
       },
       {
         accessorKey: 'end_time', 
         header: 'Shift End Time',
+        enableEditing: false
       },
       {
         accessorKey: 'first_name',
@@ -164,6 +199,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
       {
         accessorKey: 'hours',
         header: 'Hours Volunteered',
+        enableEditing: false
       },
       ],
       [],
@@ -183,7 +219,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
         }}
         columns={columns} 
         data={tableData} 
-        initialState={{ columnVisibility: { email: false } }}
+        initialState={{ columnVisibility: { email: false, id: false } }}
         editingMode="modal"
         enableColumnOrdering
         enableEditing
@@ -209,7 +245,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
       />
 
       <CreateNewModal
-        columns={columns}
+        columns={columns.filter(col => col.accessorKey !== "id")}
         open={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
         onSubmit={handleCreateNewRow}

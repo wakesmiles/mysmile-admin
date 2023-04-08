@@ -30,7 +30,6 @@ const Profiletable = ( {profiles} ) => {
 
   async function update(values) {
     let orientation_to_bool = values.orientation.toLowerCase() === "true"  // convert back to bool to be read by Supabase
-    // find id of the profile to update
     let post_obj = {...values, orientation: orientation_to_bool}
 
     try {
@@ -48,9 +47,7 @@ const Profiletable = ( {profiles} ) => {
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
     if (!Object.keys(validationErrors).length) {
       tableData[row.index] = values
-      // TODO: API update request
-      update(values)
-      // location.reload() maybe not necessary for profiles, necessary for other tables)
+      update(values)  // API request for update
       setTableData([...tableData])
       exitEditingMode()
     }
