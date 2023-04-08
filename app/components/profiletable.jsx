@@ -6,18 +6,12 @@ import Loading from '../loading'
 // According to MUI docs this imports faster than doing: import { Box, Button, ... } from '@mui/material'
 // More info: https://mui.com/material-ui/guides/minimizing-bundle-size/
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogTitle from '@mui/material/DialogTitle'
 import IconButton from '@mui/material/IconButton'
-import Stack from '@mui/material/Stack'
-import TextField from '@mui/material/TextField'
 import Tooltip from '@mui/material/Tooltip'
 import Delete from '@mui/icons-material/Delete'
 import Edit from '@mui/icons-material/Edit'
 
+import { supabase } from '@/supabaseClient'
 import { states } from '../states.jsx'
 
 import '../../styles/table.css'
@@ -34,10 +28,28 @@ const Profiletable = ( {profiles} ) => {
   // vvv get data first, then set to state tableData
   const [tableData, setTableData] = useState(profiles_oriented)
 
+  async function update(values) {
+    let orientation_to_bool = values.orientation.toLowerCase() === "true"  // convert back to bool to be read by Supabase
+    // find id of the profile to update
+    let post_obj = {...values, orientation: orientation_to_bool}
+
+    try {
+      const { error } = await supabase.from("profiles").update(post_obj).eq("id", values.id)
+      if (error) {
+        console.log("error editing data")
+      } else {
+        console.log("successfully update data")
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
     if (!Object.keys(validationErrors).length) {
       tableData[row.index] = values
       // TODO: API update request
+      update(values)
       // location.reload() maybe not necessary for profiles, necessary for other tables)
       setTableData([...tableData])
       exitEditingMode()
@@ -99,6 +111,11 @@ const Profiletable = ( {profiles} ) => {
 
   const columns = useMemo( // 제3자 라이브러리가 필요한 데이타
     () => [
+      {
+        accessorKey: 'id',
+        header: 'Volunteer ID',
+        enableEditing: false,
+      },
       {
         accessorKey: 'first_name', 
         header: 'First Name',
@@ -180,6 +197,7 @@ const Profiletable = ( {profiles} ) => {
         }} 
         columns={columns} 
         data={tableData}
+        initialState={{ columnVisibility: { id: false } }}
         editingMode="modal"
         enableColumnOrdering
         enableEditing

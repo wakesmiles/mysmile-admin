@@ -19,7 +19,7 @@ import Edit from '@mui/icons-material/Edit'
 
 import APIMessage from './apimsg'
 import '../../styles/table.css'
-import { supabase } from '@/supabaseClient';
+import { supabase } from '@/supabaseClient'
 
 const Signuptable = ( {profiles, signups, shifts} ) => {
 
@@ -97,7 +97,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
           console.log(error)
         }
       }
-      location.reload()
+      // location.reload()  // maybe do this after clicking the X button
     } catch (error) {
       console.log(error)
     }
@@ -218,8 +218,8 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
       {apiMsgOpen ? (  // message box that pops up after making API request
         <div className="fixed top-0 left-0 h-full w-full bg-gray-800 bg-opacity-50 z-999 flex justify-center items-center">
           <div className="relative mx-auto mt-16 p-6 bg-white rounded-lg shadow-xl">
-            <APIMessage message={apiResponse}/>  {/* dont forget to change back to apiResponse */}
-            <button className="absolute top-0 right-0 mt-4 mr-4 text-gray-500" type="button" aria-label="Close" onClick={() => setApiMsgOpen(false)}>
+            <APIMessage message={apiResponse}/>  
+            <button className="absolute top-0 right-0 mt-4 mr-4 text-gray-500" type="button" aria-label="Close" onClick={() => location.reload()}>
               <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>
