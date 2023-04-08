@@ -33,12 +33,11 @@ const Profiletable = ( {profiles} ) => {
   })
   // vvv get data first, then set to state tableData
   const [tableData, setTableData] = useState(profiles_oriented)
-  // console.log(tableData)
 
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
     if (!Object.keys(validationErrors).length) {
       tableData[row.index] = values
-      // API: update request
+      // TODO: API update request
       // location.reload() maybe not necessary for profiles, necessary for other tables)
       setTableData([...tableData])
       exitEditingMode()

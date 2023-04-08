@@ -17,9 +17,9 @@ import Tooltip from '@mui/material/Tooltip'
 import Delete from '@mui/icons-material/Delete'
 import Edit from '@mui/icons-material/Edit'
 import AssignmentIcon from '@mui/icons-material/Assignment'
-import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import InsertEmoticon from '@mui/icons-material/InsertEmoticon'
 
+import APIMessage from './apimsg'
 import '../../styles/table.css'
 import { supabase } from '@/supabaseClient';
 
@@ -27,6 +27,8 @@ const Shiftstable = ( {signups, shifts} ) => {
 
   const [createModalOpen, setCreateModalOpen] = useState(false)
   const [volunteerModalOpen, setVolunteerModalOpen] = useState(false)
+  const [apiMsgOpen, setApiMsgOpen] = useState(false)  
+  const [apiResponse, setApiResponse] = useState("")
 
   const data = []
   const signup_data = signups.data
@@ -74,11 +76,19 @@ const Shiftstable = ( {signups, shifts} ) => {
       end_time: values.end_time + ".000Z",
       remaining_slots: +values.remaining_slots
     }
-    // console.log(new_shift)
     latest_id++  // this allows adding shifts without having to refresh
-    const { error } = await supabase
-      .from("shifts")
-      .insert(new_shift)
+    try {
+      const { error } = await supabase.from("shifts").insert(new_shift)
+      if (error) {
+        setApiMsgOpen(true)
+        setApiResponse(error.message)
+      } else {
+        setApiMsgOpen(true)
+        setApiResponse("Success!")
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const handleCreateNewRow = (values) => {
@@ -89,14 +99,10 @@ const Shiftstable = ( {signups, shifts} ) => {
     
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
     tableData[row.index] = values
-    // API request for update, and refresh code here
+    // TODO: API request for update (followed by a refresh maybe)
     setTableData([...tableData])
     exitEditingMode()
   }
-    
-  // const handleCancelRowEdits = () => {
-  //     setValidationErrors({})
-  // }
     
   const handleDeleteRow = useCallback(
     (row) => {
@@ -108,6 +114,7 @@ const Shiftstable = ( {signups, shifts} ) => {
     [tableData],
   )
 
+  // this function is called viewVolunteers but it is really just copying emails
   const handleViewVolunteers = (row) => {
     let copied_list_of_volunteers = ""
     data.filter(shift => {  // get array of all volunteers for the shift represented by this row
@@ -207,6 +214,7 @@ const Shiftstable = ( {signups, shifts} ) => {
           <Button color="primary" onClick={() => setCreateModalOpen(true)} variant="contained">Create New Shift</Button>
         )}
       />
+
       {/* 신규 shift 만드는 component */}
       <CreateNewModal
         columns={columns}
@@ -215,10 +223,27 @@ const Shiftstable = ( {signups, shifts} ) => {
         onSubmit={handleCreateNewRow}
       />
 
+      {/* box that pops up when copy volunteer emails */}
       <ViewVolunteerModal
         open={volunteerModalOpen}
         onClose={() => setVolunteerModalOpen(false)}
       />
+
+      {apiMsgOpen ? (  // message box that pops up after making API request
+        <div className="fixed top-0 left-0 h-full w-full bg-gray-800 bg-opacity-50 z-999 flex justify-center items-center">
+          <div className="relative mx-auto mt-16 p-6 bg-white rounded-lg shadow-xl">
+            <APIMessage message={apiResponse}/> 
+            <button className="absolute top-0 right-0 mt-4 mr-4 text-gray-500" type="button" aria-label="Close" onClick={() => setApiMsgOpen(false)}>
+              <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        ): 
+        <div></div>
+      }
+
     </div>
   )
 }

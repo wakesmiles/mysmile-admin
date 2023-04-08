@@ -36,7 +36,6 @@ export default function Home() {
           console.log("error in profiles")
         }
       })
-      .then(console.log("this is profiles"))
   }
 
   const fetchSignups = async () => {
@@ -50,7 +49,6 @@ export default function Home() {
           console.log("error in signups")
         }
       })
-      .then(console.log("this is signups"))
   }
 
   const fetchShifts = async () => {
@@ -64,7 +62,6 @@ export default function Home() {
           console.log("error in shifts")
         }
       })
-      .then(console.log("this is shifts"))
   }
 
   useEffect(() => { // Get all table information at once (delete this once the methods here can be moved to server-side rendering)
@@ -79,10 +76,10 @@ export default function Home() {
               .eq("id", data.data.user.id)
               .then((admin, err) => {
                 if (admin.data.length !== 0) { // check if logged in user is registered in the admin table
-                  console.log("this user is an admin")
+                  // console.log("this user is an admin")
                   setUser(admin)
                 } else {
-                  console.log("this user is not an admin")
+                  // console.log("this user is not an admin")
                 }
               })
           }
@@ -126,7 +123,7 @@ export default function Home() {
       <div className="">
         {content === "None" && <Defaultpage />}
         {content === "Profiles" && <Profiletable profiles={people} />}
-        {content === "Signups" && <Signuptable signups={signups} shifts={shifts} />}
+        {content === "Signups" && <Signuptable profiles={people} signups={signups} shifts={shifts} />}
         {content === "Shifts" && <Shiftstable signups={signups} shifts={shifts} />}
         {content === "Stats" && <Stats signups={signups} shifts={shifts}/>}
       </div> 
