@@ -197,7 +197,7 @@ const Shiftstable = ( {signups, shifts} ) => {
 
   return (
     <div>
-      <h2 className="p-4">Shifts Table</h2>
+      <h2 className="p-4 text-white">Shifts Table</h2>
       <MaterialReactTable 
         displayColumnDefOptions={{
           'mrt-row-actions': {

@@ -182,7 +182,7 @@ const Profiletable = ( {profiles} ) => {
 
   return (
     <div>
-      <h2 className="p-4">Profiles Table</h2>
+      <h2 className="p-4 text-white">Profiles Table</h2>
       <MaterialReactTable
         displayColumnDefOptions={{
           'mrt-row-actions': {

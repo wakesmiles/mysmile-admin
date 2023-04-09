@@ -113,7 +113,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
   async function update(values) {
     let new_user = profiles_data.filter(profile => (profile.email === values.email && profile.first_name === values.first_name && profile.last_name === values.last_name))[0]
     let post_obj = {}
-    post_obj.user_id = new_user ? new_user.id : 404
+    post_obj.user_id = new_user ? new_user.id : 404  // if can't find matching profile, change the data type from string to number to force it to throw an HTTP 400
     post_obj.first_name = values.first_name
     post_obj.last_name = values.last_name
     post_obj.email = values.email
@@ -207,7 +207,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
 
   return (
     <div>
-      <h2 className="p-4">Signups Table</h2>
+      <h2 className="p-4 text-white">Signups Table</h2>
       <MaterialReactTable 
         displayColumnDefOptions={{
           'mrt-row-actions': {
