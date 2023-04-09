@@ -130,6 +130,7 @@ const Profiletable = ( {profiles} ) => {
       {
         accessorKey: 'email', 
         header: 'Email',
+        enableEditing: false,
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell)
         })
