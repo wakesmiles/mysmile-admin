@@ -6,7 +6,7 @@ const Defaultpage = () => {
             <div className="default-bg-img">
                 <div className="welcome-msg-container">
                     <h1>Welcome to the Wake Smiles Admin Portal</h1>
-                    <p>Click one of the tabs to get started</p>
+                    <p className="text-[#00539b]">Click one of the tabs to get started</p>
                 </div>
             </div>
         </div>

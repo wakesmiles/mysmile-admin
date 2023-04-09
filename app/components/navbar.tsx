@@ -46,7 +46,7 @@ function Navbar({ setContent, logout }: NavProps): JSX.Element {
           </li>
         </ul>
       </div>
-      <div onClick={() => logout()} className="flex justify-center items-center px-8 py-2 hover:cursor-pointer hover:bg-red-600 text-white text-center font-bold rounded-md mx-1">Logout</div>
+      <div onClick={() => logout()} className="flex justify-center items-center px-8 py-2 hover:cursor-pointer hover:bg-red-600 text-white text-center text-lg rounded-md mx-1">Logout</div>
     </nav>
   );
 }
