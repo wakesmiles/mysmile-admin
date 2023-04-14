@@ -104,7 +104,7 @@ export default function Home() {
     if (success) router.push("/")
   }
 
-  if (isLoading || !people || !signups || !shifts) { // 한 가지라도 로드 안 됐으면...
+  if (isLoading || !people || !signups || !shifts) { // If even one thing hasn't been loaded yet...
     return <Loading />
   }
 

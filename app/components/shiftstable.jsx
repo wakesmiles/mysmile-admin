@@ -18,6 +18,7 @@ import Delete from '@mui/icons-material/Delete'
 import Edit from '@mui/icons-material/Edit'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import InsertEmoticon from '@mui/icons-material/InsertEmoticon'
+import GroupsIcon from '@mui/icons-material/Groups';
 
 import APIMessage from './apimsg'
 import '../../styles/table.css'
@@ -27,6 +28,7 @@ const Shiftstable = ( {signups, shifts} ) => {
 
   const [createModalOpen, setCreateModalOpen] = useState(false)
   const [volunteerModalOpen, setVolunteerModalOpen] = useState(false)
+  const [volunteerModalMsg, setVolunteerModalMsg] = useState("")
   const [apiMsgOpen, setApiMsgOpen] = useState(false)  
   const [apiResponse, setApiResponse] = useState("")
 
@@ -154,6 +156,20 @@ const Shiftstable = ( {signups, shifts} ) => {
     navigator.clipboard.writeText(copied_list_of_volunteers)
   }
 
+  const handleViewVolunteers2 = (row) => {
+    let copied_volunteer_names = ""
+    data.filter(shift => {
+      if (shift.id === row.getValue('id')) {
+        if (shift.volunteers.length > 0) {
+          shift.volunteers.forEach(volunteer => {
+            copied_volunteer_names += volunteer.first_name + " " + volunteer.last_name + ", "
+          })
+        }
+      }
+    })
+    navigator.clipboard.writeText(copied_volunteer_names)
+  }
+
   const columns = useMemo( // 제3자 라이브러리가 필요한 데이타
     () => [
       {
@@ -230,9 +246,19 @@ const Shiftstable = ( {signups, shifts} ) => {
             <Tooltip arrow placement="right" title="Copy Volunteer Emails">
               <IconButton onClick={() => {
                 setVolunteerModalOpen(true)
+                setVolunteerModalMsg("Volunteer emails copied to clipboard!")
                 handleViewVolunteers(row)
               }}>
                 <AssignmentIcon/>
+              </IconButton>
+            </Tooltip>
+            <Tooltip arrow placement="right" title="Copy Volunteer Names">
+              <IconButton onClick={() => {
+                setVolunteerModalOpen(true)
+                setVolunteerModalMsg("Volunteer names copied to clipboard!")
+                handleViewVolunteers2(row)
+              }}>
+                <GroupsIcon/>
               </IconButton>
             </Tooltip>
           </Box>
@@ -254,6 +280,7 @@ const Shiftstable = ( {signups, shifts} ) => {
       <ViewVolunteerModal
         open={volunteerModalOpen}
         onClose={() => setVolunteerModalOpen(false)}
+        message={volunteerModalMsg}
       />
 
       {apiMsgOpen ? (  // message box that pops up after making API request
@@ -268,8 +295,7 @@ const Shiftstable = ( {signups, shifts} ) => {
           </div>
         </div>
         ): 
-        <div></div>
-      }
+        <div></div>}
 
     </div>
   )
@@ -313,12 +339,11 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
   )
 }
 
-export const ViewVolunteerModal = ({ open, onClose }) => {
+export const ViewVolunteerModal = ({ open, onClose, message }) => {
   return (
     <Dialog open={open}>
       <div className="p-4 flex flex-col justify-center align-middle">
-        <h2>Volunteer emails copied to clipboard!</h2>
-        {/* <button onClick={onClose}>X</button> */}
+        <h2>{message}</h2>
         <IconButton onClick={onClose}>
           <InsertEmoticon />
         </IconButton>

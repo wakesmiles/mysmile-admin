@@ -10,6 +10,7 @@ import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
 import Delete from '@mui/icons-material/Delete'
 import Edit from '@mui/icons-material/Edit'
+import DownloadIcon from '@mui/icons-material/Download';
 
 import { supabase } from '@/supabaseClient'
 import { states } from '../states.jsx'

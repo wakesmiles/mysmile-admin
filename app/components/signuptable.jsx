@@ -60,11 +60,22 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
   const [tableData, setTableData] = useState(data)
 
   async function post(values) {
-    // check if it meets remaining slots (can just check rem_slots field of data)
+    // Do something with SMTP2Go here?
 
     // find shift id based on date, start_time, end_time 
     const shift_for_given_date = shifts_data.filter(shift => (shift.shift_date == values.date && shift.start_time === values.start_time && shift.end_time === values.end_time))[0]
     console.log(shift_for_given_date)  // get the shiftid of this field
+
+    // below code will probably prevent duplicates?
+    // let post_shift_id = "No shift found with this date and time"
+    // if (shift_for_given_date) {
+    //   if (shift_for_given_date.rem_slots <= 0) {
+    //     post_shift_id = "This shift is full"
+    //   } else {
+    //     post_shift_id = shift_for_given_date.id
+    //   }
+    // }
+    // IDEA immediately make a post request with wrong data and modify shift_for_given_date with "No more rem slots"
 
     // find user for given id
     let volunteer_for_given_info = profiles_data.filter(vol => (vol.first_name === values.first_name && vol.last_name === values.last_name && vol.email === values.email))[0]
@@ -111,13 +122,14 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
   }
   
   async function update(values) {
+    // do something with SMTP2Go here?
     let new_user = profiles_data.filter(profile => (profile.email === values.email && profile.first_name === values.first_name && profile.last_name === values.last_name))[0]
     let post_obj = {}
     post_obj.user_id = new_user ? new_user.id : 404  // if can't find matching profile, change the data type from string to number to force it to throw an HTTP 400
     post_obj.first_name = values.first_name
     post_obj.last_name = values.last_name
     post_obj.email = values.email
-    if (values.clock_in !== "" && values.clock_in !== "") { 
+    if (values.clock_in !== "" && values.clock_in !== "") {  
       post_obj.clock_in = values.clock_in
       post_obj.clock_out = values.clock_out
     }

@@ -33,6 +33,9 @@ function Navbar({ setContent, logout }: NavProps): JSX.Element {
             <NavButton onClick={() => setContent("None")}>Home</NavButton>
           </li>
           <li>
+            <NavButton onClick={() => setContent("Stats")}>Stats</NavButton>
+          </li>
+          <li>
             <NavButton onClick={() => setContent("Profiles")}>Profiles</NavButton>
           </li>       
           <li>
@@ -40,9 +43,6 @@ function Navbar({ setContent, logout }: NavProps): JSX.Element {
           </li>
           <li>
             <NavButton onClick={() => setContent("Shifts")}>Shifts</NavButton>
-          </li>
-          <li>
-            <NavButton onClick={() => setContent("Stats")}>Stats</NavButton>
           </li>
         </ul>
       </div>
