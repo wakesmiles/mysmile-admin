@@ -64,15 +64,20 @@ const Profiletable = ( {profiles, signups} ) => {
   // There is no post request in profiles because it is easier to create new profile in existing volunteer app
 
   async function deleteRequest(values) {
-    console.log(values.original)
+    // console.log(values.original)
     try {
-      const { error } = await supabase.from("profiles").delete().eq('id', values.original.id)
+      const { error } = await supabase.from("profiles").delete().eq('id', values.original.id)  // delete the Profile data structure
       if (error) {
         setApiMsgOpen(true)
         setApiResponse(error.message)
       } else {
         setApiMsgOpen(true)
         setApiResponse("Profile deletion was successful!")
+      }
+      const { data, error2 } = await supabase.auth.admin.deleteUser(values.original.id)  // delete the authentication for the profile
+      if (error2) {
+        console.log("error in deleting the authentication")
+        console.log(error2)
       }
     } catch (error) {
       console.log(error)
