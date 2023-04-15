@@ -51,6 +51,7 @@ const Shiftstable = ( {signups, shifts} ) => {
         
     let volunteers = []
     volunteers = signup_data.filter(signup => signup.shift_id === shift.id)
+    obj.num_vols = volunteers.length
     obj.volunteers = volunteers  // only stored in shifts data, not displayed in MUI table
     if (volunteers.length === 0) {
       obj.email_1 = ""
@@ -224,6 +225,11 @@ const Shiftstable = ( {signups, shifts} ) => {
       {
         accessorKey: 'email_2',
         header: 'Email 2',
+        enableEditing: false
+      },
+      {
+        accessorKey: 'num_vols',
+        header: 'Filled',
         enableEditing: false
       },
       {

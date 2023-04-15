@@ -151,6 +151,23 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
       } else {
         setApiMsgOpen(true)
         setApiResponse("Signup successfully deleted!")
+        // find the shift and update the remaining slot
+        console.log(shifts_data)
+        console.log(values.original)
+        let shift_where_signup_was_deleted = shifts_data.filter(shift => shift.id === values.original.shiftid)[0]
+        console.log(shift_where_signup_was_deleted)
+        let current_rem_slots = shift_where_signup_was_deleted.remaining_slots
+        console.log(current_rem_slots)
+        try {
+          const { error } = await supabase.from("shifts").update({remaining_slots: current_rem_slots + 1}).eq('id', shift_where_signup_was_deleted.id)
+          if (error) {
+            console.log("Error updating remaining slots")
+          } else {
+            console.log("Successfully change remaining slots")
+          }
+        } catch (error) {
+          console.log(error)
+        }
       }
     } catch (error) {
       console.log(error)
@@ -268,7 +285,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
         <div className="fixed top-0 left-0 h-full w-full bg-gray-800 bg-opacity-50 z-999 flex justify-center items-center">
           <div className="relative mx-auto mt-16 p-6 bg-white rounded-lg shadow-xl">
             <APIMessage message={apiResponse}/>  
-            <button className="absolute top-0 right-0 mt-4 mr-4 text-gray-500" type="button" aria-label="Close" onClick={() => setApiMsgOpen(false)}>
+            <button className="absolute top-0 right-0 mt-4 mr-4 text-gray-500" type="button" aria-label="Close" onClick={() => location.reload()}>  {/* Try to make this a refetch of data instead of hard refresh */}
               <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>
