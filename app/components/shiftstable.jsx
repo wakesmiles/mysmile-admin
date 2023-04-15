@@ -1,6 +1,6 @@
 'use client'
 import { useCallback, useMemo, useState } from 'react'
-import MaterialReactTable from "material-react-table";
+import MaterialReactTable from "material-react-table"
 
 // According to MUI docs this imports faster than doing: import { Box, Button, ... } from '@mui/material'
 // More info: https://mui.com/material-ui/guides/minimizing-bundle-size/
@@ -18,11 +18,12 @@ import Delete from '@mui/icons-material/Delete'
 import Edit from '@mui/icons-material/Edit'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import InsertEmoticon from '@mui/icons-material/InsertEmoticon'
-import GroupsIcon from '@mui/icons-material/Groups';
+import GroupsIcon from '@mui/icons-material/Groups'
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt'
 
 import APIMessage from './apimsg'
 import '../../styles/table.css'
-import { supabase } from '@/supabaseClient';
+import { supabase } from '@/supabaseClient'
 
 const Shiftstable = ( {signups, shifts} ) => {
 
@@ -86,7 +87,7 @@ const Shiftstable = ( {signups, shifts} ) => {
         setApiResponse(error.message)
       } else {
         setApiMsgOpen(true)
-        setApiResponse("Success!")
+        setApiResponse("Successfully added a new shift!")
       }
     } catch (error) {
       console.log(error)
@@ -117,7 +118,7 @@ const Shiftstable = ( {signups, shifts} ) => {
         setApiResponse(error.message)
       } else {
         setApiMsgOpen(true)
-        setApiResponse("Success!")
+        setApiResponse("Successfully updated shift!")
       }
     } catch (error) {
       console.log(error)
@@ -130,13 +131,34 @@ const Shiftstable = ( {signups, shifts} ) => {
     setTableData([...tableData])
     exitEditingMode()
   }
+
+  async function deleteRequest(values) {
+    console.log(values.original)
+    try {
+      const { error } = await supabase.from("shifts").delete().eq('id', values.original.id)
+      if (error) {
+        setApiMsgOpen(true)
+        setApiResponse(error.message)
+      } else {
+        setApiMsgOpen(true)
+        setApiResponse("Shift deletion was successful!")
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
     
   const handleDeleteRow = useCallback(
     (row) => {
-      if (!confirm(`Are you sure you want to delete the shift for ${row.getValue('date')} starting at ${row.getValue('start_time')}?`)) return
-      // API: delete request
-      tableData.splice(row.index, 1)
-      setTableData([...tableData])
+      if (signup_data.filter(signup => signup.shift_id === row.getValue('id')).length > 0) {
+        setApiMsgOpen(true)
+        setApiResponse("Please delete all signups for this profile first")
+      } else {
+        if (!confirm(`Are you sure you want to delete the shift for ${row.getValue('date')} starting at ${row.getValue('start_time')}?`)) return
+        deleteRequest(row)
+        tableData.splice(row.index, 1)
+        setTableData([...tableData])
+      }
     },
     [tableData],
   )
@@ -156,6 +178,7 @@ const Shiftstable = ( {signups, shifts} ) => {
     navigator.clipboard.writeText(copied_list_of_volunteers)
   }
 
+  // function for copying volunter first and last names to clipboard
   const handleViewVolunteers2 = (row) => {
     let copied_volunteer_names = ""
     data.filter(shift => {
@@ -209,7 +232,7 @@ const Shiftstable = ( {signups, shifts} ) => {
       },
     ],
     [],
-  );
+  )
 
   return (
     <div>
@@ -233,17 +256,17 @@ const Shiftstable = ( {signups, shifts} ) => {
         // onEditingRowCancel={handleCancelRowEdits}
         renderRowActions={({ row, table }) => (
           <Box sx={{ display: 'flex', gap: '1rem'}}>
-            <Tooltip arrow placement="left" title="Edit">
+            <Tooltip arrow placement="bottom" title="Edit">
               <IconButton onClick={() => table.setEditingRow(row)}>
                 <Edit />
               </IconButton>
             </Tooltip>
-            <Tooltip arrow placement="right" title="Delete">
+            <Tooltip arrow placement="bottom" title="Delete">
               <IconButton color="error" onClick={() => handleDeleteRow(row)}>
                 <Delete />
               </IconButton>
             </Tooltip>
-            <Tooltip arrow placement="right" title="Copy Volunteer Emails">
+            <Tooltip arrow placement="bottom" title="Copy Volunteer Emails">
               <IconButton onClick={() => {
                 setVolunteerModalOpen(true)
                 setVolunteerModalMsg("Volunteer emails copied to clipboard!")
@@ -252,13 +275,13 @@ const Shiftstable = ( {signups, shifts} ) => {
                 <AssignmentIcon/>
               </IconButton>
             </Tooltip>
-            <Tooltip arrow placement="right" title="Copy Volunteer Names">
+            <Tooltip arrow placement="bottom" title="Copy Volunteer Names">
               <IconButton onClick={() => {
                 setVolunteerModalOpen(true)
                 setVolunteerModalMsg("Volunteer names copied to clipboard!")
                 handleViewVolunteers2(row)
               }}>
-                <GroupsIcon/>
+                <PeopleAltIcon/>
               </IconButton>
             </Tooltip>
           </Box>
@@ -287,7 +310,7 @@ const Shiftstable = ( {signups, shifts} ) => {
         <div className="fixed top-0 left-0 h-full w-full bg-gray-800 bg-opacity-50 z-999 flex justify-center items-center">
           <div className="relative mx-auto mt-16 p-6 bg-white rounded-lg shadow-xl">
             <APIMessage message={apiResponse}/> 
-            <button className="absolute top-0 right-0 mt-4 mr-4 text-gray-500" type="button" aria-label="Close" onClick={() => location.reload()}>
+            <button className="absolute top-0 right-0 mt-4 mr-4 text-gray-500" type="button" aria-label="Close" onClick={() => setApiMsgOpen(false)}>
               <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>

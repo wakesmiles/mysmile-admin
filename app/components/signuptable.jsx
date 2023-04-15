@@ -66,27 +66,15 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
     const shift_for_given_date = shifts_data.filter(shift => (shift.shift_date == values.date && shift.start_time === values.start_time && shift.end_time === values.end_time))[0]
     console.log(shift_for_given_date)  // get the shiftid of this field
 
-    // below code will probably prevent duplicates?
-    // let post_shift_id = "No shift found with this date and time"
-    // if (shift_for_given_date) {
-    //   if (shift_for_given_date.rem_slots <= 0) {
-    //     post_shift_id = "This shift is full"
-    //   } else {
-    //     post_shift_id = shift_for_given_date.id
-    //   }
-    // }
-    // IDEA immediately make a post request with wrong data and modify shift_for_given_date with "No more rem slots"
-
     // find user for given id
     let volunteer_for_given_info = profiles_data.filter(vol => (vol.first_name === values.first_name && vol.last_name === values.last_name && vol.email === values.email))[0]
-    // console.log(volunteer_for_given_info.id)
 
     const new_signup = {
       first_name: values.first_name,
       last_name: values.last_name,
       email: values.email,
       id: latest_id+1,
-      shift_id: shift_for_given_date ? shift_for_given_date.id : "No shift found with this date and time",
+      shift_id: (shift_for_given_date && shift_for_given_date.remaining_slots > 0)? shift_for_given_date.id : "No open shift found with this date and time",  // check if there is an open shift for this date
       user_id: volunteer_for_given_info ? volunteer_for_given_info.id : "No volunteer found with this name and/or email",
       clock_in: null,
       clock_out: null
@@ -101,7 +89,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
         setApiResponse(error.message)
       } else {
         setApiMsgOpen(true)
-        setApiResponse("Success!")
+        setApiResponse("New signup successfully added!")
         // decrease remaining slots upon successful signup
         try {
           await supabase.from("shifts").update({remaining_slots: shift_for_given_date.remaining_slots - 1}).eq('id', shift_for_given_date.id)
@@ -109,7 +97,6 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
           console.log(error)
         }
       }
-      // location.reload()  // maybe do this after clicking the X button
     } catch (error) {
       console.log(error)
     }
@@ -141,7 +128,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
         setApiResponse(error.message)
       } else {
         setApiMsgOpen(true)
-        setApiResponse("Success!")
+        setApiResponse("Signup successfully updated!")
       }
     } catch (error) {
       console.log(error.message)
@@ -155,11 +142,25 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
     exitEditingMode()
   }
 
+  async function deleteRequest(values) {
+    try {
+      const { error } = await supabase.from("signups").delete().eq('id', values.original.id)
+      if (error) {
+        setApiMsgOpen(true)
+        setApiResponse(error.message)
+      } else {
+        setApiMsgOpen(true)
+        setApiResponse("Signup successfully deleted!")
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const handleDeleteRow = useCallback(
     (row) => {  // apply the following code to all rows...
-      // check to see if there are other instances in other databases first?
       if (!confirm(`Are you sure you want to delete the shift for ${row.getValue('first_name')} at ${row.getValue('date')} starting at ${row.getValue('start_time')}?`)) return
-      // API: delete request
+      deleteRequest(row)  // API delete request
       tableData.splice(row.index, 1)
       setTableData([...tableData])
     },
@@ -215,7 +216,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
       },
       ],
       [],
-    );
+    )
 
   return (
     <div>
@@ -239,12 +240,12 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
         // onEditingRowCancel={handleCancelRowEdits}
         renderRowActions={({ row, table }) => (
           <Box sx={{ display: 'flex', gap: '1rem'}}>
-            <Tooltip arrow placement="left" title="Edit">
+            <Tooltip arrow placement="bottom" title="Edit">
               <IconButton onClick={() => table.setEditingRow(row)}>
                 <Edit />
               </IconButton>
             </Tooltip>
-            <Tooltip arrow placement="right" title="Delete">
+            <Tooltip arrow placement="bottom" title="Delete">
               <IconButton color="error" onClick={() => handleDeleteRow(row)}>
                 <Delete />
               </IconButton>
@@ -267,7 +268,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
         <div className="fixed top-0 left-0 h-full w-full bg-gray-800 bg-opacity-50 z-999 flex justify-center items-center">
           <div className="relative mx-auto mt-16 p-6 bg-white rounded-lg shadow-xl">
             <APIMessage message={apiResponse}/>  
-            <button className="absolute top-0 right-0 mt-4 mr-4 text-gray-500" type="button" aria-label="Close" onClick={() => location.reload()}>
+            <button className="absolute top-0 right-0 mt-4 mr-4 text-gray-500" type="button" aria-label="Close" onClick={() => setApiMsgOpen(false)}>
               <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>

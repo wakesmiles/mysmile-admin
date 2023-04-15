@@ -29,7 +29,7 @@ export default function Home() {
     await supabase
       .from("profiles")
       .select()
-      .then((profiles, err) => {
+      .then((profiles, err) => {  // add an neq statement to avoid showing admin info
         if (profiles) {
           setPeople(profiles)
         } else {
@@ -67,7 +67,7 @@ export default function Home() {
   useEffect(() => { // Get all table information at once (delete this once the methods here can be moved to server-side rendering)
     const fetchTables = async () => {
       try {
-        setIsLoading(true);
+        setIsLoading(true)
         await supabase.auth.getUser().then(async (data, err) => { // Check if the user is an admin
           if (data) {
             await supabase
@@ -118,16 +118,16 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       
-      <Navbar setContent={setContent} logout = {logout}/>
+      <Navbar setContent={setContent} logout={logout}/>
 
       <div className="">
         {content === "None" && <Defaultpage />}
-        {content === "Profiles" && <Profiletable profiles={people} />}
+        {content === "Stats" && <Stats signups={signups} shifts={shifts}/>}
+        {content === "Profiles" && <Profiletable profiles={people} signups={signups}/>}
         {content === "Signups" && <Signuptable profiles={people} signups={signups} shifts={shifts} />}
         {content === "Shifts" && <Shiftstable signups={signups} shifts={shifts} />}
-        {content === "Stats" && <Stats signups={signups} shifts={shifts}/>}
       </div> 
 
     </div>
-  );
+  )
 }

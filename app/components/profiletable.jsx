@@ -10,16 +10,18 @@ import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
 import Delete from '@mui/icons-material/Delete'
 import Edit from '@mui/icons-material/Edit'
-import DownloadIcon from '@mui/icons-material/Download';
+import APIMessage from './apimsg'
 
 import { supabase } from '@/supabaseClient'
 import { states } from '../states.jsx'
 
 import '../../styles/table.css'
 
-const Profiletable = ( {profiles} ) => {
+const Profiletable = ( {profiles, signups} ) => {
   
   const [validationErrors, setValidationErrors] = useState({})
+  const [apiMsgOpen, setApiMsgOpen] = useState(false)  // change back to false after testing
+  const [apiResponse, setApiResponse] = useState("")
     
   // 원래 받던 데이타에서 오리엔테이션 필드가 boolean 인데, string 으로 바꿔야 테이블에 나타난다
   const profiles_oriented = profiles.data.map(obj => {
@@ -28,6 +30,7 @@ const Profiletable = ( {profiles} ) => {
   })
   // vvv get data first, then set to state tableData
   const [tableData, setTableData] = useState(profiles_oriented)
+  // console.log(signups)
 
   async function update(values) {
     let orientation_to_bool = values.orientation.toLowerCase() === "true"  // convert back to bool to be read by Supabase
@@ -36,7 +39,7 @@ const Profiletable = ( {profiles} ) => {
     try {
       const { error } = await supabase.from("profiles").update(post_obj).eq("id", values.id)
       if (error) {
-        console.log("error editing data")
+        console.log("error editing data")  // doesn't show pop up box with status in this case, just console log
       } else {
         console.log("successfully update data")
       }
@@ -58,15 +61,36 @@ const Profiletable = ( {profiles} ) => {
     setValidationErrors({})
   }
 
-  // 플로필 테이블에 새 계정 만들수 없는이유: 여기서 이메일과 비밀번호를 만들수 없다
+  // There is no post request in profiles because it is easier to create new profile in existing volunteer app
+
+  async function deleteRequest(values) {
+    console.log(values.original)
+    try {
+      const { error } = await supabase.from("profiles").delete().eq('id', values.original.id)
+      if (error) {
+        setApiMsgOpen(true)
+        setApiResponse(error.message)
+      } else {
+        setApiMsgOpen(true)
+        setApiResponse("Profile deletion was successful!")
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const handleDeleteRow = useCallback(
     (row) => {
-      // TODO: check signups for this profile. find and delete signups associated with this profile
-      if (!confirm(`Are you sure you want to delete ${row.getValue('first_name')}`)) return
-      // API: delete request
-      tableData.splice(row.index, 1)
-      setTableData([...tableData])
+      // Check signups for this profile. find and delete signups associated with this profile
+      if (signups.data.filter(signup => signup.email === row.getValue('email')).length > 0) {
+        setApiMsgOpen(true)
+        setApiResponse("Please delete all signups for this profile first")
+      } else {
+        if (!confirm(`Are you sure you want to delete ${row.getValue('first_name')}`)) return
+        deleteRequest(row)  // API delete request
+        tableData.splice(row.index, 1)
+        setTableData([...tableData])
+      }
     },
     [tableData],
   )
@@ -79,7 +103,7 @@ const Profiletable = ( {profiles} ) => {
     .toLowerCase()
     .match(
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-    );
+    )
 
   const getCommonEditTextFieldProps = useCallback(
     (cell) => {
@@ -89,8 +113,8 @@ const Profiletable = ( {profiles} ) => {
         onBlur: (event) => {
           const isValid =
             cell.column.id === 'email'
-              ? validateEmail(event.target.value)  // 테이블 열이 email 경우: validateEmail()
-              : validateRequired(event.target.value)  // 테이블 열이 딴겨면: validateRequired()
+              ? validateEmail(event.target.value)  // if table row is email: validateEmail()
+              : validateRequired(event.target.value)  // else: validateRequired()
           if(!isValid) {  // set validation error for cell if invalid
             setValidationErrors({
               ...validationErrors,
@@ -180,7 +204,7 @@ const Profiletable = ( {profiles} ) => {
       }
     ],
     [getCommonEditTextFieldProps],
-  );
+  )
 
   return (
     <div>
@@ -204,12 +228,12 @@ const Profiletable = ( {profiles} ) => {
         onEditingRowCancel={handleCancelRowEdits}
         renderRowActions={({ row, table }) => (
           <Box sx={{ display: 'flex', gap: '1rem'}}>
-            <Tooltip arrow placement="left" title="Edit">
+            <Tooltip arrow placement="bottom" title="Edit">
               <IconButton onClick={() => table.setEditingRow(row)}>
                 <Edit />
               </IconButton>
             </Tooltip>
-            <Tooltip arrow placement="right" title="Delete">
+            <Tooltip arrow placement="bottom" title="Delete">
               <IconButton color="error" onClick={() => handleDeleteRow(row)}>
                 <Delete />
               </IconButton>
@@ -217,8 +241,23 @@ const Profiletable = ( {profiles} ) => {
           </Box>
         )}
       />
+      {apiMsgOpen ? (  // message box that pops up after making API request
+        <div className="fixed top-0 left-0 h-full w-full bg-gray-800 bg-opacity-50 z-999 flex justify-center items-center">
+          <div className="relative mx-auto mt-16 p-6 bg-white rounded-lg shadow-xl">
+            <APIMessage message={apiResponse}/>  
+            <button className="absolute top-0 right-0 mt-4 mr-4 text-gray-500" type="button" aria-label="Close" onClick={() => setApiMsgOpen(false)}>
+              <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        ): 
+        <div></div>
+      }
     </div>
   )
 }
+
 
 export default Profiletable

@@ -12,10 +12,10 @@ const Reroute = () => {
             <div className="reroute-container">  {/* for some reason, calling this "container" calls the "container" class in login.css */}
                 
                 <div className="reroute-messagebox">
-                    <p>There was an error logging in as an administrator.</p>
-                    <p>If there was an error, please contact the Wake Smiles Dental Clinic management.</p>
+                    <p>Login was not authenticated.</p>
+                    <p>Please contact the Wake Smiles Management if there has been an error.</p>
                     <div className="reroute-goback">
-                        <Link href="/" style={{ textDecoration: 'none' }}>돌아가기</Link>
+                        <Link href="/" style={{ textDecoration: 'none' }}>Return</Link>
                     </div>
                 </div>
             </div>
