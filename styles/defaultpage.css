@@ -3,12 +3,6 @@ body {
     background-color: #000;
 }
 
-/* .default-bg {
-    background-color: black;
-    width: 100%;
-    height: 100%;
-} */
-
 .default-bg-img {
     display: flex;
     flex-direction: column;
@@ -68,5 +62,5 @@ body {
     .welcome-msg-container p {
         font-size: 12px;
     }
-  }
+}
 

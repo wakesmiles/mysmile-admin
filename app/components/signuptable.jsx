@@ -34,7 +34,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
 
   let latest_id = 0
 
-  signup_data.forEach(signup => {  // 데이터 정리
+  signup_data.forEach(signup => { 
     let obj = {}
     obj.id = signup.id
     latest_id = Math.max(latest_id, signup.id)
@@ -43,7 +43,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
     obj.first_name = signup.first_name
     obj.last_name = signup.last_name
     obj.email = signup.email
-    obj.clock_in = signup.clock_in ?? "" // 만약에 null 이면 오류, 빈 따옴표로 변경하면 해결됌
+    obj.clock_in = signup.clock_in ?? "" // if we get null from database, convert to ""
     obj.clock_out = signup.clock_out ?? ""
     obj.hours = signup.hours ?? ""
     obj.email = signup.email
@@ -60,11 +60,9 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
   const [tableData, setTableData] = useState(data)
 
   async function post(values) {
-    // Do something with SMTP2Go here?
 
     // find shift id based on date, start_time, end_time 
     const shift_for_given_date = shifts_data.filter(shift => (shift.shift_date == values.date && shift.start_time === values.start_time && shift.end_time === values.end_time))[0]
-    console.log(shift_for_given_date)  // get the shiftid of this field
 
     // find user for given id
     let volunteer_for_given_info = profiles_data.filter(vol => (vol.first_name === values.first_name && vol.last_name === values.last_name && vol.email === values.email))[0]
@@ -79,7 +77,6 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
       clock_in: null,
       clock_out: null
     }
-    console.log(new_signup)
     latest_id++  // allows for creating multiple signup at once
 
     try {
@@ -109,7 +106,6 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
   }
   
   async function update(values) {
-    // do something with SMTP2Go here?
     let new_user = profiles_data.filter(profile => (profile.email === values.email && profile.first_name === values.first_name && profile.last_name === values.last_name))[0]
     let post_obj = {}
     post_obj.user_id = new_user ? new_user.id : 404  // if can't find matching profile, change the data type from string to number to force it to throw an HTTP 400
@@ -120,7 +116,6 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
       post_obj.clock_in = values.clock_in
       post_obj.clock_out = values.clock_out
     }
-    console.log(post_obj)
     try {
       const { error } = await supabase.from("signups").update(post_obj).eq("id", values.id)
       if (error) {
@@ -152,12 +147,8 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
         setApiMsgOpen(true)
         setApiResponse("Signup successfully deleted!")
         // find the shift and update the remaining slot
-        console.log(shifts_data)
-        console.log(values.original)
         let shift_where_signup_was_deleted = shifts_data.filter(shift => shift.id === values.original.shiftid)[0]
-        console.log(shift_where_signup_was_deleted)
         let current_rem_slots = shift_where_signup_was_deleted.remaining_slots
-        console.log(current_rem_slots)
         try {
           const { error } = await supabase.from("shifts").update({remaining_slots: current_rem_slots + 1}).eq('id', shift_where_signup_was_deleted.id)
           if (error) {
@@ -184,7 +175,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
     [tableData],
   )
 
-  const columns = useMemo( // 제3자 라이브러리가 필요한 데이타
+  const columns = useMemo(
     () => [
       {
         accessorKey: 'id',
@@ -254,7 +245,6 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
         enableColumnOrdering
         enableEditing
         onEditingRowSave={handleSaveRowEdits}
-        // onEditingRowCancel={handleCancelRowEdits}
         renderRowActions={({ row, table }) => (
           <Box sx={{ display: 'flex', gap: '1rem'}}>
             <Tooltip arrow placement="bottom" title="Edit">

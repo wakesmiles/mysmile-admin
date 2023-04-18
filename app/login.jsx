@@ -32,12 +32,6 @@ const Login = () => {
   return (
     <div className="body">
       <div className="section">
-        {/* 🤮 못생겨서 취소 🤮  */}
-        {/* <div className="color"></div>
-        <div className="color"></div>
-        <div className="color"></div>
-        <div className="color"></div> */}
-
         <div className="login-box">
           <div className="login-square"></div>
           <div className="login-square"></div>

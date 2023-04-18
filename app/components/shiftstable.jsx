@@ -36,9 +36,9 @@ const Shiftstable = ( {signups, shifts} ) => {
   const signup_data = signups.data
   const shifts_data = shifts.data
 
-  let latest_id = 0  // 가장 최근 id 찾고, 나중에 자동으로 넣기
+  let latest_id = 0  // variable to find most recent ID
 
-  shifts_data.forEach(shift => {  // 데이터 정리
+  shifts_data.forEach(shift => {  // create an object that gets info from database and generate info for table
     let obj = {}
     obj.id = shift.id  // only stored in data, not displayed in MUI table
     latest_id = Math.max(latest_id, shift.id)
@@ -65,9 +65,6 @@ const Shiftstable = ( {signups, shifts} ) => {
     data.push(obj)
   })
 
-  // console.log(latest_id)
-
-  // console.log(data)
   const [tableData, setTableData] = useState(data)
 
   async function post(values) {  // POST request
@@ -101,7 +98,6 @@ const Shiftstable = ( {signups, shifts} ) => {
   }
 
   async function update(values) {
-    console.log(values)
     const update_obj = {
       id: values.id,
       shift_type: values.type,
@@ -110,7 +106,6 @@ const Shiftstable = ( {signups, shifts} ) => {
       end_time: values.end_time,
       remaining_slots: values.remaining_slots
     }
-    console.log(update_obj)
     try {
       const { error } = await supabase.from("shifts").update(update_obj).eq("id", values.id)
       if (error) {
@@ -133,7 +128,6 @@ const Shiftstable = ( {signups, shifts} ) => {
   }
 
   async function deleteRequest(values) {
-    console.log(values.original)
     try {
       const { error } = await supabase.from("shifts").delete().eq('id', values.original.id)
       if (error) {
@@ -164,7 +158,7 @@ const Shiftstable = ( {signups, shifts} ) => {
   )
 
   // this function is called viewVolunteers but it is really just copying emails
-  const handleViewVolunteers = (row) => {
+  const handleCopyEmails = (row) => {
     let copied_list_of_volunteers = ""
     data.filter(shift => {  // get array of all volunteers for the shift represented by this row
       if (shift.id === row.getValue('id')) {
@@ -179,7 +173,7 @@ const Shiftstable = ( {signups, shifts} ) => {
   }
 
   // function for copying volunter first and last names to clipboard
-  const handleViewVolunteers2 = (row) => {
+  const handleCopyNames = (row) => {
     let copied_volunteer_names = ""
     data.filter(shift => {
       if (shift.id === row.getValue('id')) {
@@ -193,7 +187,7 @@ const Shiftstable = ( {signups, shifts} ) => {
     navigator.clipboard.writeText(copied_volunteer_names)
   }
 
-  const columns = useMemo( // 제3자 라이브러리가 필요한 데이타
+  const columns = useMemo(
     () => [
       {
         accessorKey: 'id',
@@ -253,12 +247,11 @@ const Shiftstable = ( {signups, shifts} ) => {
         }}
         columns={columns} 
         data={tableData} 
-        initialState={{ columnVisibility: { id: false } }}  // 기본적으로 id 기둥 숨기기
+        initialState={{ columnVisibility: { id: false } }}  // hide id by default
         editingMode="modal"
         enableColumnOrdering
         enableEditing
         onEditingRowSave={handleSaveRowEdits}
-        // onEditingRowCancel={handleCancelRowEdits}
         renderRowActions={({ row, table }) => (
           <Box sx={{ display: 'flex', gap: '1rem'}}>
             <Tooltip arrow placement="bottom" title="Edit">
@@ -275,7 +268,7 @@ const Shiftstable = ( {signups, shifts} ) => {
               <IconButton onClick={() => {
                 setVolunteerModalOpen(true)
                 setVolunteerModalMsg("Volunteer emails copied to clipboard!")
-                handleViewVolunteers(row)
+                handleCopyEmails(row)
               }}>
                 <AssignmentIcon/>
               </IconButton>
@@ -284,7 +277,7 @@ const Shiftstable = ( {signups, shifts} ) => {
               <IconButton onClick={() => {
                 setVolunteerModalOpen(true)
                 setVolunteerModalMsg("Volunteer names copied to clipboard!")
-                handleViewVolunteers2(row)
+                handleCopyNames(row)
               }}>
                 <PeopleAltIcon/>
               </IconButton>
@@ -296,7 +289,7 @@ const Shiftstable = ( {signups, shifts} ) => {
         )}
       />
 
-      {/* 신규 shift 만드는 component */}
+      {/* modal for creating new shift */}
       <CreateNewModal
         columns={columns}
         open={createModalOpen}
@@ -348,7 +341,7 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
       <DialogContent>
         <form onSubmit={(e) => e.preventDefault()}>
           <Stack sx={{width: '100%', minWidth: { xs: '300px', sm: '360px', md: '400px'}, gap: '1.5rem'}}>
-            {columns.filter(col => !(col.accessorKey === "email_1" || col.accessorKey === "email_2" || col.accessorKey === "id")).map((column) => (
+            {columns.filter(col => !(col.accessorKey === "email_1" || col.accessorKey === "email_2" || col.accessorKey === "id" || col.accessorKey === "num_vols")).map((column) => (
               <TextField
                 key={column.accessorKey}
                 label={column.header}

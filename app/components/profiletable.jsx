@@ -22,15 +22,15 @@ const Profiletable = ( {profiles, signups} ) => {
   const [validationErrors, setValidationErrors] = useState({})
   const [apiMsgOpen, setApiMsgOpen] = useState(false)  // change back to false after testing
   const [apiResponse, setApiResponse] = useState("")
+
     
-  // 원래 받던 데이타에서 오리엔테이션 필드가 boolean 인데, string 으로 바꿔야 테이블에 나타난다
-  const profiles_oriented = profiles.data.map(obj => {
+  // orientation field from database is a boolean, but it needs to be a string to be read by the table
+  const profiles_oriented = profiles.data.filter(profile => profile.email !== "banbim@banbim.com").map(obj => {  // filter out admin
     let data = {...obj, orientation: obj.orientation.toString()} 
     return data
   })
   // vvv get data first, then set to state tableData
   const [tableData, setTableData] = useState(profiles_oriented)
-  // console.log(signups)
 
   async function update(values) {
     let orientation_to_bool = values.orientation.toLowerCase() === "true"  // convert back to bool to be read by Supabase
@@ -64,7 +64,6 @@ const Profiletable = ( {profiles, signups} ) => {
   // There is no post request in profiles because it is easier to create new profile in existing volunteer app
 
   async function deleteRequest(values) {
-    // console.log(values.original)
     try {
       const { error } = await supabase.from("profiles").delete().eq('id', values.original.id)  // delete the Profile data structure
       if (error) {
@@ -136,7 +135,7 @@ const Profiletable = ( {profiles, signups} ) => {
     }
   )
 
-  const columns = useMemo( // 제3자 라이브러리가 필요한 데이타
+  const columns = useMemo( // input data for the table library
     () => [
       {
         accessorKey: 'id',

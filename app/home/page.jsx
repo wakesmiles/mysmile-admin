@@ -23,13 +23,15 @@ export default function Home() {
   const [content, setContent] = useState("None")
   const router = useRouter()
 
+
   // For the future, fetchProfiles(), fetchSignups(), and fetchShifts() should be moved to another file 
   // that is NOT a client component, so they can be rendered on server instead of all on client
+
   const fetchProfiles = async () => {
     await supabase
       .from("profiles")
       .select()
-      .then((profiles, err) => {  // add an neq statement to avoid showing admin info
+      .then((profiles, err) => {
         if (profiles) {
           setPeople(profiles)
         } else {

@@ -10,7 +10,6 @@ const Reroute = () => {
                 <title>MySmile</title>
             </Head>
             <div className="reroute-container">  {/* for some reason, calling this "container" calls the "container" class in login.css */}
-                
                 <div className="reroute-messagebox">
                     <p>Login was not authenticated.</p>
                     <p>Please contact the Wake Smiles Management if there has been an error.</p>
