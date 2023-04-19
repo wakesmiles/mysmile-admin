@@ -26,6 +26,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
   const [createModalOpen, setCreateModalOpen] = useState(false)
   const [apiMsgOpen, setApiMsgOpen] = useState(false)  // change back to false after testing
   const [apiResponse, setApiResponse] = useState("")
+  const [dontRefresh, setDontRefresh] = useState(false)
 
   const data = []
   const profiles_data = profiles.data
@@ -84,6 +85,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
       if (error) {
         setApiMsgOpen(true)
         setApiResponse(error.message)
+        setDontRefresh(true)
       } else {
         setApiMsgOpen(true)
         setApiResponse("New signup successfully added!")
@@ -120,6 +122,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
       const { error } = await supabase.from("signups").update(post_obj).eq("id", values.id)
       if (error) {
         setApiMsgOpen(true)
+        setDontRefresh(true)
         setApiResponse(error.message)
       } else {
         setApiMsgOpen(true)
@@ -143,6 +146,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
       if (error) {
         setApiMsgOpen(true)
         setApiResponse(error.message)
+        setDontRefresh(true)
       } else {
         setApiMsgOpen(true)
         setApiResponse("Signup successfully deleted!")
@@ -163,6 +167,11 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  function handleStartOver() {
+    setApiMsgOpen(false)
+    setDontRefresh(false)
   }
 
   const handleDeleteRow = useCallback(
@@ -275,7 +284,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
         <div className="fixed top-0 left-0 h-full w-full bg-gray-800 bg-opacity-50 z-999 flex justify-center items-center">
           <div className="relative mx-auto mt-16 p-6 bg-white rounded-lg shadow-xl">
             <APIMessage message={apiResponse}/>  
-            <button className="absolute top-0 right-0 mt-4 mr-4 text-gray-500" type="button" aria-label="Close" onClick={() => location.reload()}>  {/* Try to make this a refetch of data instead of hard refresh */}
+            <button className="absolute top-0 right-0 mt-4 mr-4 text-gray-500" type="button" aria-label="Close" onClick={() => dontRefresh ? handleStartOver() : location.reload()}>  {/* if dontRefresh is true, do setApiMsgOpen(false) and dontRefresh(false), else location.reload() */}
               <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>
