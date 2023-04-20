@@ -53,4 +53,4 @@ const states = [
     "WY",
   ];
   
-  export default states;
+  export default states
