@@ -23,9 +23,8 @@ const Profiletable = ( {profiles, signups} ) => {
   const [apiMsgOpen, setApiMsgOpen] = useState(false)  // change back to false after testing
   const [apiResponse, setApiResponse] = useState("")
 
-    
   // orientation field from database is a boolean, but it needs to be a string to be read by the table
-  const profiles_oriented = profiles.data.filter(profile => profile.email !== "banbim@banbim.com").map(obj => {  // filter out admin
+  const profiles_oriented = profiles.data.filter(profile => profile.first_name !== "ban").map(obj => {  // filter out admin(s)
     let data = {...obj, orientation: obj.orientation.toString()} 
     return data
   })

@@ -1,18 +1,18 @@
-"use client";
+'use client'
 
-import { useRef } from "react";
-import { useRouter } from "next/navigation";
-import { supabase } from "../supabaseClient";
-import "../styles/login.css";
+import { useRef } from "react"
+import { useRouter } from "next/navigation"
+import { supabase } from "../supabaseClient"
+import "../styles/login.css"
 
 const Login = () => {
-  const emailRef = useRef("");
-  const passwordRef = useRef("");
-  const router = useRouter();
+  const emailRef = useRef("")
+  const passwordRef = useRef("")
+  const router = useRouter()
 
   const login = async (e) => {
-    e.preventDefault();
-    let success = false;
+    e.preventDefault()
+    // let success = false
 
     await supabase.auth
       .signInWithPassword({
@@ -21,12 +21,34 @@ const Login = () => {
       })
       .then(({ data, error }) => {
         if (error) {
-          alert(error.message);
+          alert(error.message)
         } else if (data) {
-          success = true;
+          // console.log(data)
+          try {
+            supabase.auth.getUser().then(async (data, err) => {
+              if (data) {
+                // console.log(data)
+                await supabase
+                  .from("admins")
+                  .select()
+                  .eq("id", data.data.user.id)
+                  .then((admin, err) => {
+                    // console.log(admin)
+                    if (admin.data.length !== 0) {
+                      // success = true
+                      router.push("/home")
+                    } else {
+                      alert("Invalid login credentials")
+                    }
+                  })
+              }
+            })
+          } catch (error) {
+            console.log(error)
+          }
         }
       });
-    if (success) router.push("/home");
+    // if (success) router.push("/home")
   };
 
   return (
@@ -76,7 +98,7 @@ const Login = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

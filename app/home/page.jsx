@@ -70,22 +70,22 @@ export default function Home() {
     const fetchTables = async () => {
       try {
         setIsLoading(true)
-        await supabase.auth.getUser().then(async (data, err) => { // Check if the user is an admin
-          if (data) {
-            await supabase
-              .from("admins")
-              .select()
-              .eq("id", data.data.user.id)
-              .then((admin, err) => {
-                if (admin.data.length !== 0) { // check if logged in user is registered in the admin table
-                  // console.log("this user is an admin")
-                  setUser(admin)
-                } else {
-                  // console.log("this user is not an admin")
-                }
-              })
-          }
-        })
+        // await supabase.auth.getUser().then(async (data, err) => { // Check if the user is an admin
+        //   if (data) {
+        //     await supabase
+        //       .from("admins")
+        //       .select()
+        //       .eq("id", data.data.user.id)
+        //       .then((admin, err) => {
+        //         if (admin.data.length !== 0) { // check if logged in user is registered in the admin table
+        //           // console.log("this user is an admin")
+        //           setUser(admin)
+        //         } else {
+        //           // console.log("this user is not an admin")
+        //         }
+        //       })
+        //   }
+        // })
         fetchProfiles()
         fetchSignups()
         fetchShifts()
@@ -110,9 +110,9 @@ export default function Home() {
     return <Loading />
   }
 
-  if (!user) { // Send the user here if they are not admin
-    return <Reroute />
-  }
+  // if (!user) { // Send the user here if they are not admin
+  //   return <Reroute />
+  // }
 
   // NOTE: According to https://stackoverflow.com/questions/66729498/next-js-is-not-rendering-css-in-server-side-rendering
   // If you are not in production, the CSS/styles will not be loaded on the first fetch (refresh to see)

@@ -26,7 +26,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
   const [createModalOpen, setCreateModalOpen] = useState(false)
   const [apiMsgOpen, setApiMsgOpen] = useState(false)  // change back to false after testing
   const [apiResponse, setApiResponse] = useState("")
-  const [dontRefresh, setDontRefresh] = useState(false)
+  const [dontRefresh, setDontRefresh] = useState(false)  // if the user entered something wrong and nothing is being added to DB, don't want to do a hard refresh
 
   const data = []
   const profiles_data = profiles.data
