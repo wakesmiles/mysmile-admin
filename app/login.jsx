@@ -12,7 +12,6 @@ const Login = () => {
 
   const login = async (e) => {
     e.preventDefault()
-    // let success = false
 
     await supabase.auth
       .signInWithPassword({
@@ -23,19 +22,15 @@ const Login = () => {
         if (error) {
           alert(error.message)
         } else if (data) {
-          // console.log(data)
           try {
             supabase.auth.getUser().then(async (data, err) => {
               if (data) {
-                // console.log(data)
                 await supabase
                   .from("admins")
                   .select()
                   .eq("id", data.data.user.id)
                   .then((admin, err) => {
-                    // console.log(admin)
                     if (admin.data.length !== 0) {
-                      // success = true
                       router.push("/home")
                     } else {
                       alert("Invalid login credentials")
@@ -48,7 +43,6 @@ const Login = () => {
           }
         }
       });
-    // if (success) router.push("/home")
   };
 
   return (

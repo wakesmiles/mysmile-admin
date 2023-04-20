@@ -2,13 +2,13 @@ import {ReactNode} from 'react'
 import "../../styles/navbar.css"
 
 interface NavProps{
-  setContent: Function;
-  logout: Function;
+  setContent: Function
+  logout: Function
 }
 
 interface ButtonProps{
-  children: ReactNode; 
-  onClick: React.MouseEventHandler;
+  children: ReactNode
+  onClick: React.MouseEventHandler
 }
 
 function NavButton({ children, onClick }: ButtonProps): JSX.Element {
@@ -17,7 +17,7 @@ function NavButton({ children, onClick }: ButtonProps): JSX.Element {
     onClick={onClick}>
       {children}
     </div>
-  );
+  )
 }
 
 function Navbar({ setContent, logout }: NavProps): JSX.Element {
@@ -44,8 +44,8 @@ function Navbar({ setContent, logout }: NavProps): JSX.Element {
       </div>
       <div onClick={() => logout()} className="flex justify-center items-center px-8 py-2 hover:cursor-pointer hover:bg-red-600 text-white text-center text-lg rounded-md mx-1">Logout</div>
     </nav>
-  );
+  )
 }
 
 
-export default Navbar;
+export default Navbar

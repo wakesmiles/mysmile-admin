@@ -3,7 +3,6 @@ import { supabase } from "../../supabaseClient"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 
-import Reroute from "../components/reroute"
 import Loading from "../loading"
 import Profiletable from "../components/profiletable"
 import Signuptable from "../components/signuptable"
@@ -15,14 +14,12 @@ import Stats from "../components/stats"
 import "../../styles/homepage.css"
 
 export default function Home() {
-  const [user, setUser] = useState(null)
   const [people, setPeople] = useState(null)
   const [signups, setSignups] = useState(null)
   const [shifts, setShifts] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [content, setContent] = useState("None")
   const router = useRouter()
-
 
   // For the future, fetchProfiles(), fetchSignups(), and fetchShifts() should be moved to another file 
   // that is NOT a client component, so they can be rendered on server instead of all on client
@@ -70,22 +67,6 @@ export default function Home() {
     const fetchTables = async () => {
       try {
         setIsLoading(true)
-        // await supabase.auth.getUser().then(async (data, err) => { // Check if the user is an admin
-        //   if (data) {
-        //     await supabase
-        //       .from("admins")
-        //       .select()
-        //       .eq("id", data.data.user.id)
-        //       .then((admin, err) => {
-        //         if (admin.data.length !== 0) { // check if logged in user is registered in the admin table
-        //           // console.log("this user is an admin")
-        //           setUser(admin)
-        //         } else {
-        //           // console.log("this user is not an admin")
-        //         }
-        //       })
-        //   }
-        // })
         fetchProfiles()
         fetchSignups()
         fetchShifts()
@@ -109,10 +90,6 @@ export default function Home() {
   if (isLoading || !people || !signups || !shifts) { // If even one thing hasn't been loaded yet...
     return <Loading />
   }
-
-  // if (!user) { // Send the user here if they are not admin
-  //   return <Reroute />
-  // }
 
   // NOTE: According to https://stackoverflow.com/questions/66729498/next-js-is-not-rendering-css-in-server-side-rendering
   // If you are not in production, the CSS/styles will not be loaded on the first fetch (refresh to see)
