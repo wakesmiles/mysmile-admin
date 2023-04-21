@@ -1,4 +1,9 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Visit Site
+Check out the deployed app at [mysmile-admin.vercel.app](https://mysmile-admin.vercel.app/)!
+
+## Run in Development Mode
+
+To run this application locally, you will need to add an `.env.local` file into the root directory of this project. If you are working with the Wake Smiles dental clinic to further develop this admin portal, see the developer docs provided for you by admin (the one created by the Spring 2023 team). Please contact limhanseo1@gmail.com for any questions regarding development.
 
 ## Getting Started
 
@@ -14,13 +19,6 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
 ## Learn More
 
@@ -31,8 +29,6 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Deployment on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+This project has already been deployed. Any changes pushed to the `main` branch will automatically be deployed. Because this app is currently being used with real data, it is highly recommended to create a new branch to test features and merge the new branch to main once the feature being tested is fully implemented. To view the Vercel dashboard for this app, log into Vercel using Github with the Github credentials provided by the Wake Smiles dental clinic admin.
