@@ -6,40 +6,51 @@ import Loading from '../loading'
 // According to MUI docs this imports faster than doing: import { Box, Button, ... } from '@mui/material'
 // More info: https://mui.com/material-ui/guides/minimizing-bundle-size/
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogTitle from '@mui/material/DialogTitle'
 import IconButton from '@mui/material/IconButton'
-import Stack from '@mui/material/Stack'
-import TextField from '@mui/material/TextField'
 import Tooltip from '@mui/material/Tooltip'
 import Delete from '@mui/icons-material/Delete'
 import Edit from '@mui/icons-material/Edit'
+import APIMessage from './apimsg'
 
+import { supabase } from '@/supabaseClient'
 import { states } from '../states.jsx'
 
 import '../../styles/table.css'
 
-const Profiletable = ( {profiles} ) => {
+const Profiletable = ( {profiles, signups} ) => {
   
-  const [createModalOpen, setCreateModalOpen] = useState(false)
   const [validationErrors, setValidationErrors] = useState({})
-    
-  // 원래 받던 데이타에서 오리엔테이션 필드가 boolean 인데, string 으로 바꿔야 테이블에 나타난다
-  const profiles_oriented = profiles.data.map(obj => {
+  const [apiMsgOpen, setApiMsgOpen] = useState(false)  // change back to false after testing
+  const [apiResponse, setApiResponse] = useState("")
+
+  // orientation field from database is a boolean, but it needs to be a string to be read by the table
+  const profiles_oriented = profiles.data.filter(profile => profile.first_name !== "ban").map(obj => {  // filter out admin(s)
     let data = {...obj, orientation: obj.orientation.toString()} 
     return data
   })
   // vvv get data first, then set to state tableData
   const [tableData, setTableData] = useState(profiles_oriented)
 
+  async function update(values) {
+    let orientation_to_bool = values.orientation.toLowerCase() === "true"  // convert back to bool to be read by Supabase
+    let post_obj = {...values, orientation: orientation_to_bool}
+
+    try {
+      const { error } = await supabase.from("profiles").update(post_obj).eq("id", values.id)
+      if (error) {
+        console.log("error editing data")  // doesn't show pop up box with status in this case, just console log
+      } else {
+        console.log("successfully update data")
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
     if (!Object.keys(validationErrors).length) {
       tableData[row.index] = values
-      // API: update request
-      // location.reload() maybe (maybe not necessary for profiles, necessary for other tables)
+      update(values)  // API request for update
       setTableData([...tableData])
       exitEditingMode()
     }
@@ -49,15 +60,40 @@ const Profiletable = ( {profiles} ) => {
     setValidationErrors({})
   }
 
-  // 플로필 테이블에 새 계정 만들수 없는이유: 여기서 이메일과 비밀번호를 만들수 없다
+  // There is no post request in profiles because it is easier to create new profile in existing volunteer app
+
+  async function deleteRequest(values) {
+    try {
+      const { error } = await supabase.from("profiles").delete().eq('id', values.original.id)  // delete the Profile data structure
+      if (error) {
+        setApiMsgOpen(true)
+        setApiResponse(error.message)
+      } else {
+        setApiMsgOpen(true)
+        setApiResponse("Profile deletion was successful!")
+      }
+      const { data, error2 } = await supabase.auth.admin.deleteUser(values.original.id)  // delete the authentication for the profile
+      if (error2) {
+        console.log("error in deleting the authentication")
+        console.log(error2)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const handleDeleteRow = useCallback(
     (row) => {
-      // TODO: check signups for this profile. find and delete signups associated with this profile
-      if (!confirm(`Are you sure you want to delete ${row.getValue('first_name')}`)) return
-      // API: delete request
-      tableData.splice(row.index, 1)
-      setTableData([...tableData])
+      // Check signups for this profile. find and delete signups associated with this profile
+      if (signups.data.filter(signup => signup.email === row.getValue('email')).length > 0) {
+        setApiMsgOpen(true)
+        setApiResponse("Please delete all signups for this profile first")
+      } else {
+        if (!confirm(`Are you sure you want to delete ${row.getValue('first_name')}`)) return
+        deleteRequest(row)  // API delete request
+        tableData.splice(row.index, 1)
+        setTableData([...tableData])
+      }
     },
     [tableData],
   )
@@ -70,7 +106,7 @@ const Profiletable = ( {profiles} ) => {
     .toLowerCase()
     .match(
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-    );
+    )
 
   const getCommonEditTextFieldProps = useCallback(
     (cell) => {
@@ -80,8 +116,8 @@ const Profiletable = ( {profiles} ) => {
         onBlur: (event) => {
           const isValid =
             cell.column.id === 'email'
-              ? validateEmail(event.target.value)  // 테이블 열이 email 경우: validateEmail()
-              : validateRequired(event.target.value)  // 테이블 열이 딴겨면: validateRequired()
+              ? validateEmail(event.target.value)  // if table row is email: validateEmail()
+              : validateRequired(event.target.value)  // else: validateRequired()
           if(!isValid) {  // set validation error for cell if invalid
             setValidationErrors({
               ...validationErrors,
@@ -98,8 +134,13 @@ const Profiletable = ( {profiles} ) => {
     }
   )
 
-  const columns = useMemo( // 제3자 라이브러리가 필요한 데이타
+  const columns = useMemo( // input data for the table library
     () => [
+      {
+        accessorKey: 'id',
+        header: 'Volunteer ID',
+        enableEditing: false,
+      },
       {
         accessorKey: 'first_name', 
         header: 'First Name',
@@ -117,6 +158,7 @@ const Profiletable = ( {profiles} ) => {
       {
         accessorKey: 'email', 
         header: 'Email',
+        enableEditing: false,
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell)
         })
@@ -165,11 +207,11 @@ const Profiletable = ( {profiles} ) => {
       }
     ],
     [getCommonEditTextFieldProps],
-  );
+  )
 
   return (
     <div>
-      <h2 className="p-4">Profiles Table</h2>
+      <h2 className="p-4 text-white">Profiles Table</h2>
       <MaterialReactTable
         displayColumnDefOptions={{
           'mrt-row-actions': {
@@ -181,6 +223,7 @@ const Profiletable = ( {profiles} ) => {
         }} 
         columns={columns} 
         data={tableData}
+        initialState={{ columnVisibility: { id: false } }}
         editingMode="modal"
         enableColumnOrdering
         enableEditing
@@ -188,12 +231,12 @@ const Profiletable = ( {profiles} ) => {
         onEditingRowCancel={handleCancelRowEdits}
         renderRowActions={({ row, table }) => (
           <Box sx={{ display: 'flex', gap: '1rem'}}>
-            <Tooltip arrow placement="left" title="Edit">
+            <Tooltip arrow placement="bottom" title="Edit">
               <IconButton onClick={() => table.setEditingRow(row)}>
                 <Edit />
               </IconButton>
             </Tooltip>
-            <Tooltip arrow placement="right" title="Delete">
+            <Tooltip arrow placement="bottom" title="Delete">
               <IconButton color="error" onClick={() => handleDeleteRow(row)}>
                 <Delete />
               </IconButton>
@@ -201,8 +244,23 @@ const Profiletable = ( {profiles} ) => {
           </Box>
         )}
       />
+      {apiMsgOpen ? (  // message box that pops up after making API request
+        <div className="fixed top-0 left-0 h-full w-full bg-gray-800 bg-opacity-50 z-999 flex justify-center items-center">
+          <div className="relative mx-auto mt-16 p-6 bg-white rounded-lg shadow-xl">
+            <APIMessage message={apiResponse}/>  
+            <button className="absolute top-0 right-0 mt-4 mr-4 text-gray-500" type="button" aria-label="Close" onClick={() => setApiMsgOpen(false)}>
+              <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        ): 
+        <div></div>
+      }
     </div>
   )
 }
+
 
 export default Profiletable

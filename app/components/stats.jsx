@@ -66,20 +66,23 @@ export default function Stats({signups, shifts}) {
     }
 
     return (
-        <div className="flex justify-center bg-gray-700 text-white">
-            <div className="flex flex-col">
-                <h2>Hours Reports:</h2>
-                <label htmlFor="firstName">First Name:</label>
-                <input className="text-black" type="text" id="firstName" value={firstName} onChange={(e)=>setFirstName(e.target.value)} />
-                <label htmlFor="lastName">Last Name:</label>
-                <input className="text-black" type="text" id="lastName" value={lastName} onChange={(e)=>setLastName(e.target.value)} />
-                <label htmlFor="searchFrom">Start Date (YYYY-MM-DD):</label>
-                <input className="text-black" type="text" id="searchFrom" placeholder="2020-01-01" value={searchFrom} onChange={(e)=>setSearchFrom(e.target.value)} />
-                <label htmlFor="searchTo">End Name (YYYY-MM-DD):</label>
-                <input className="text-black" type="text" id="searchTo" placeholder="2050-01-01"value={searchTo} onChange={(e)=>setSearchTo(e.target.value)} />
-                <button onClick={handleFetchUserReports}>FETCH</button>
-                <p>{displayVolunteerTime}</p>
+        <div className="default-bg-img">
+            <div className="flex justify-center backdrop-blur-xl rounded-xl text-white p-7 border border-[#00539b]">
+                <div className="flex flex-col px-6">
+                    <h2 className="flex justify-center pb-4 text-lg">Hours Reports</h2>
+                    <label htmlFor="firstName">First Name</label>
+                    <input className="text-black mb-2 rounded-md p-1.5 m-0.5 tracking-wide" type="text" id="firstName" value={firstName} onChange={(e)=>setFirstName(e.target.value)} />
+                    <label htmlFor="lastName">Last Name</label>
+                    <input className="text-black mb-2 rounded-md p-1.5 m-0.5 tracking-wide" type="text" id="lastName" value={lastName} onChange={(e)=>setLastName(e.target.value)} />
+                    <label htmlFor="searchFrom">Start Date (YYYY-MM-DD)</label>
+                    <input className="text-black mb-2 rounded-md p-1.5 m-0.5 tracking-wide" type="text" id="searchFrom" placeholder="2020-01-01" value={searchFrom} onChange={(e)=>setSearchFrom(e.target.value)} />
+                    <label htmlFor="searchTo">End Date (YYYY-MM-DD)</label>
+                    <input className="text-black mb-2 rounded-md p-1.5 m-0.5 tracking-wide" type="text" id="searchTo" placeholder="2050-01-01"value={searchTo} onChange={(e)=>setSearchTo(e.target.value)} />
+                    <button className="mt-4 py-2 px-4 border border-[#00539b] text-white] rounded-md" onClick={handleFetchUserReports}>GET STATS</button>
+                    <p className="m-4">{displayVolunteerTime}</p>
+                </div>
             </div>
         </div>
+
     )
 }
