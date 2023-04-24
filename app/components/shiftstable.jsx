@@ -146,7 +146,7 @@ const Shiftstable = ( {signups, shifts} ) => {
     (row) => {
       if (signup_data.filter(signup => signup.shift_id === row.getValue('id')).length > 0) {
         setApiMsgOpen(true)
-        setApiResponse("Please delete all signups for this profile first")
+        setApiResponse("Please delete all signups for this shift first")
       } else {
         if (!confirm(`Are you sure you want to delete the shift for ${row.getValue('date')} starting at ${row.getValue('start_time')}?`)) return
         deleteRequest(row)

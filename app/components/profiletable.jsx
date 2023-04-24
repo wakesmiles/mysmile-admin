@@ -24,7 +24,7 @@ const Profiletable = ( {profiles, signups} ) => {
   const [apiResponse, setApiResponse] = useState("")
 
   // orientation field from database is a boolean, but it needs to be a string to be read by the table
-  const profiles_oriented = profiles.data.filter(profile => profile.first_name !== "ban").map(obj => {  // filter out admin(s)
+  const profiles_oriented = profiles.data.filter(profile => profile.first_name !== "WS_Admin").map(obj => {  // filter out admin(s)
     let data = {...obj, orientation: obj.orientation.toString()} 
     return data
   })
@@ -72,7 +72,8 @@ const Profiletable = ( {profiles, signups} ) => {
         setApiMsgOpen(true)
         setApiResponse("Profile deletion was successful!")
       }
-      const { data, error2 } = await supabase.auth.admin.deleteUser(values.original.id)  // delete the authentication for the profile
+      console.log(values.original.id)
+      const { data, error2 } = await supabase.auth.admin.deleteUser(values.original.id)  // this gets a not authorized error, so doesn't work right now
       if (error2) {
         console.log("error in deleting the authentication")
         console.log(error2)
