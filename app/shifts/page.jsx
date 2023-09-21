@@ -5,13 +5,36 @@ import Loading from "../loading"
 import { useEffect, useState } from "react"
 import { supabase } from "../../supabaseClient"
 import { useRouter } from "next/navigation"
+import UnauthorizedPage from "../components/unauth"
 
 import "../../styles/defaultpage.css"
 
+function fetchUser() {
+  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState(null)
+  supabase.auth.getUser().then(async (data, err) => {
+    if (!data.data.user) {
+      setLoading(false)
+      return data.data.user
+    }
+    const id = data.data.user.id
+    await supabase.from('admins')
+    .select()
+    .eq("id", id)
+    .then((admin, err) => {
+      if (admin) {
+        setUser(admin);
+        setLoading(false)
+      }
+    })
+  })
+  return [user, loading];
+}
 
 export default function ShiftsPage() {
-
     const router = useRouter()
+
+    const [user, loading] = fetchUser();
 
     const [signups, setSignups] = useState(null)
     const [shifts, setShifts] = useState(null)
@@ -66,8 +89,10 @@ export default function ShiftsPage() {
         if (success) router.push("/")
     }
 
-    if (isLoading || !signups || !shifts) { // If even one thing hasn't been loaded yet...
+    if (isLoading || !signups || !shifts || loading) { // If even one thing hasn't been loaded yet...
         return <Loading />
+    } else if (!user) {
+      return <UnauthorizedPage />
     }
     return (
         <div className="flex flex-col">
