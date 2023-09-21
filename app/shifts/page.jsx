@@ -6,36 +6,13 @@ import { useEffect, useState } from "react"
 import { supabase } from "../../supabaseClient"
 import { useRouter } from "next/navigation"
 import UnauthorizedPage from "../components/unauth"
+import { FetchUser } from "../components/unauth"
 
 import "../../styles/defaultpage.css"
 
-function fetchUser() {
-  const [loading, setLoading] = useState(true)
-  const [user, setUser] = useState(null)
-  supabase.auth.getUser().then(async (data, err) => {
-    if (!data.data.user) {
-      setLoading(false)
-      return data.data.user
-    }
-    const id = data.data.user.id
-    await supabase.from('admins')
-    .select()
-    .eq("id", id)
-    .then((admin, err) => {
-      if (admin) {
-        setUser(admin);
-        setLoading(false)
-      }
-    })
-  })
-  return [user, loading];
-}
-
 export default function ShiftsPage() {
     const router = useRouter()
-
-    const [user, loading] = fetchUser();
-
+    const [user, loading] = FetchUser();
     const [signups, setSignups] = useState(null)
     const [shifts, setShifts] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
