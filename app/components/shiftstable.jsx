@@ -23,6 +23,7 @@ import PeopleAltIcon from '@mui/icons-material/PeopleAlt'
 import APIMessage from './apimsg'
 import '../../styles/table.css'
 import { supabase } from '@/supabaseClient'
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
 
 const Shiftstable = ( {signups, shifts} ) => {
 
@@ -100,7 +101,7 @@ const Shiftstable = ( {signups, shifts} ) => {
   async function update(values) {
     const update_obj = {
       id: values.id,
-      shift_type: values.type,
+      shift_type: values.type.toLowerCase(),
       shift_date: values.date,
       start_time: values.start_time,
       end_time: values.end_time,
@@ -187,6 +188,8 @@ const Shiftstable = ( {signups, shifts} ) => {
     navigator.clipboard.writeText(copied_volunteer_names)
   }
 
+  const shiftType = ['Volunteer', 'Orientation', 'Pre-Dental', 'Dental Assistant One', 'Dental Assistant Two', 'Registered Dental Hygienist', 'Dentist']; // Different types of shifts
+
   const columns = useMemo(
     () => [
       {
@@ -197,6 +200,14 @@ const Shiftstable = ( {signups, shifts} ) => {
       {
         accessorKey: 'type', 
         header: 'Shift Type',
+        muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+          select: true, //change to select for a dropdown
+          children: shiftType.map((shift) => (
+            <MenuItem key={shift} value={shift}>
+              {shift}
+            </MenuItem>
+          )),
+        }),
       },
       {
         accessorKey: 'date',
@@ -322,13 +333,15 @@ const Shiftstable = ( {signups, shifts} ) => {
   )
 }
 
-export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
+export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => { 
   const [values, setValues] = useState(() => 
     columns.reduce((acc, column) => {
-      acc[column.accessorKey ?? ''] = ''
+      acc[column.accessorKey ?? ''] = column.accessorKey === 'type' ? '' : '';
       return acc
     }, {})
   )
+
+  const shiftType = ['Volunteer', 'Orientation', 'Pre-Dental', 'Dental Assistant One', 'Dental Assistant Two', 'Registered Dental Hygienist', 'Dentist']; // Different types of shifts
   
   const handleSubmit = () => {
     onSubmit(values)
@@ -342,12 +355,34 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
         <form onSubmit={(e) => e.preventDefault()}>
           <Stack sx={{width: '100%', minWidth: { xs: '300px', sm: '360px', md: '400px'}, gap: '1.5rem'}}>
             {columns.filter(col => !(col.accessorKey === "email_1" || col.accessorKey === "email_2" || col.accessorKey === "id" || col.accessorKey === "num_vols")).map((column) => (
-              <TextField
-                key={column.accessorKey}
+              <div key={column.accessorKey}>
+                {column.accessorKey === 'type' ? (
+                  <FormControl>
+                    <InputLabel htmlFor="shift-type">Shift Type</InputLabel>
+                    <Select
+                    label = "Shift Type"
+                    id="shift-type"
+                    name={column.accessorKey}
+                    value={values[column.accessorKey]}
+                    onChange={(e) => setValues({...values, [e.target.name]: e.target.value})}
+                    sx={{width: '100%', minWidth: { xs: '300px', sm: '360px', md: '400px'}, gap: '1.5rem'}}
+                    >
+                      {shiftType.map((type) => (
+                        <MenuItem key={type} value={type}>
+                          {type}
+                        </MenuItem>
+                      ))}
+                      </Select>
+                    </FormControl>
+                ):(
+              <TextField sx={{width: '100%', minWidth: { xs: '300px', sm: '360px', md: '400px'}, gap: '1.5rem'}} // All inputs are same size as Shift Type
+                //key={column.accessorKey}
                 label={column.header}
                 name={column.accessorKey}
                 onChange={(e) => setValues({...values, [e.target.name]: e.target.value})}
               />
+                )}
+              </div>
               ))}
           </Stack>
         </form>
