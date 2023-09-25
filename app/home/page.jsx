@@ -3,12 +3,22 @@ import { supabase } from "../../supabaseClient"
 import { useRouter } from "next/navigation"
 import Defaultpage from "../components/default"
 import Navbar from "../components/navbar"
+import UnAuthorizedPage from "../components/unauth"
+import {FetchUser} from "../components/unauth"
+import Loading from "../loading"
 
 import "../../styles/homepage.css"
-import { useEffect } from "react"
+
 
 export default function Home() {
   const router = useRouter()
+  const [user, loading] = FetchUser();
+  if (loading) {
+    return <Loading />
+  } else if (!user) {
+    return <UnAuthorizedPage />
+  }
+
 
   const logout = async () => {
     let success = false

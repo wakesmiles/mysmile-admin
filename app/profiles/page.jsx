@@ -5,14 +5,14 @@ import Loading from "../loading"
 import { useEffect, useState } from "react"
 import { supabase } from "../../supabaseClient"
 import { useRouter } from "next/navigation"
+import UnAuthorizedPage from "../components/unauth"
+import { FetchUser } from "../components/unauth"
 
 import "../../styles/defaultpage.css"
 
-
 export default function ProfilesPage() {
-
     const router = useRouter()
-
+    const [user, loading] = FetchUser()
     const [signups, setSignups] = useState(null)
     const [people, setPeople] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
@@ -66,8 +66,10 @@ export default function ProfilesPage() {
         if (success) router.push("/")
     }
 
-    if (isLoading || !signups || !people) { // If even one thing hasn't been loaded yet...
-        return <Loading />
+    if (isLoading || !signups || !people || loading) { // If even one thing hasn't been loaded yet...
+      return <Loading />
+    } else if (!user) {
+      return <UnAuthorizedPage />
     }
     return (
         <div className="flex flex-col">
