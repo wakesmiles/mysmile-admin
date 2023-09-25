@@ -1,6 +1,7 @@
 import "../../styles/defaultpage.css"
 import { useState } from "react"
 import { supabase } from "../../supabaseClient"
+import Link from "next/link"
 
 export function FetchUser() {
     const [loading, setLoading] = useState(true)
@@ -26,8 +27,13 @@ export function FetchUser() {
 
 export default function UnAuthorizedPage() {
     return (
-        <div>
-            <font color="red">THIS IS UNAUTHORIZED</font>
-        </div>
+      <div className="default-bg">
+          <div className="default-bg-img">
+            <div className="welcome-msg-container">
+              <h1>You are not authorized to view this page.</h1>
+              <Link href="/">Click here to login</Link>
+            </div>
+          </div>
+      </div>
     )
 }
