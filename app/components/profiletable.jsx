@@ -11,11 +11,13 @@ import Tooltip from '@mui/material/Tooltip'
 import Delete from '@mui/icons-material/Delete'
 import Edit from '@mui/icons-material/Edit'
 import APIMessage from './apimsg'
-
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 import { supabase } from '@/supabaseClient'
 import { states } from '../states.jsx'
-
+import { FormControl, InputLabel} from '@mui/material'
 import '../../styles/table.css'
+import { urlToHttpOptions } from 'url'
 
 const Profiletable = ( {profiles, signups} ) => {
   
@@ -134,6 +136,7 @@ const Profiletable = ( {profiles, signups} ) => {
       }
     }
   )
+  const shiftType = ['Volunteer', 'Orientation', 'Pre-Dental', 'Dental Assistant One', 'Dental Assistant Two', 'Registered Dental Hygienist', 'Dentist']; // Different types of shifts
 
   const columns = useMemo( // input data for the table library
     () => [
@@ -205,7 +208,20 @@ const Profiletable = ( {profiles, signups} ) => {
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell)
         })
-      }
+      },
+      {
+        accessorKey: 'role',
+        header: 'Role',
+        muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+          ...getCommonEditTextFieldProps(cell),
+          select: true, //change to select for a dropdown
+          children: shiftType.map((shift) => (
+            <MenuItem key={shift} value={shift}>
+              {shift}
+            </MenuItem>
+          )),
+        }),
+      },
     ],
     [getCommonEditTextFieldProps],
   )

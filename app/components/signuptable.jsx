@@ -52,6 +52,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
     let corresponding_shift = shifts_data.filter(shift => shift.id === signup.shift_id)[0]
     obj.date = corresponding_shift.shift_date
     obj.start_time = corresponding_shift.start_time
+    obj.shift_type = corresponding_shift.shift_type.toUpperCase()
     obj.end_time = corresponding_shift.end_time
     obj.rem_slots = corresponding_shift.remaining_slots
 
@@ -63,7 +64,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
   async function post(values) {
 
     // find shift id based on date, start_time, end_time 
-    const shift_for_given_date = shifts_data.filter(shift => (shift.shift_date == values.date && shift.start_time === values.start_time && shift.end_time === values.end_time))[0]
+    const shift_for_given_date = shifts_data.filter(shift => (shift.shift_date == values.date && shift.start_time === values.start_time && shift.end_time === values.end_time && shift.shift_type === values.shift_type))[0]
 
     // find user for given id
     let volunteer_for_given_info = profiles_data.filter(vol => (vol.first_name === values.first_name && vol.last_name === values.last_name && vol.email === values.email))[0]
@@ -189,6 +190,11 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
       {
         accessorKey: 'id',
         header: 'Signup ID',
+        enableEditing: false
+      },
+      {
+        accessorKey: 'shift_type',
+        header: 'Shift Type',
         enableEditing: false
       },
       {
