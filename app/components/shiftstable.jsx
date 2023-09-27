@@ -38,12 +38,13 @@ const Shiftstable = ( {signups, shifts} ) => {
   const shifts_data = shifts.data
 
   let latest_id = 0  // variable to find most recent ID
-
   shifts_data.forEach(shift => {  // create an object that gets info from database and generate info for table
     let obj = {}
     obj.id = shift.id  // only stored in data, not displayed in MUI table
     latest_id = Math.max(latest_id, shift.id)
-    obj.type = shift.shift_type.toUpperCase()
+    obj.type = shift.shift_type.map((type) => {
+      return type.toUpperCase() + ', '
+    })
     obj.date = shift.shift_date
     obj.start_time = shift.start_time
     obj.end_time = shift.end_time
@@ -71,7 +72,7 @@ const Shiftstable = ( {signups, shifts} ) => {
   async function post(values) {  // POST request
     const new_shift = {
       id: latest_id + 1,
-      shift_type: values.type.toLowerCase(),
+      shift_type: values.type.map((type) => type.toLowerCase()),
       shift_date: values.date,
       start_time: values.start_time + ".000Z",
       end_time: values.end_time + ".000Z",
@@ -101,7 +102,7 @@ const Shiftstable = ( {signups, shifts} ) => {
   async function update(values) {
     const update_obj = {
       id: values.id,
-      shift_type: values.type.toLowerCase(),
+      shift_type: values.type.map((type) => type.toLowerCase()),
       shift_date: values.date,
       start_time: values.start_time,
       end_time: values.end_time,
@@ -188,7 +189,15 @@ const Shiftstable = ( {signups, shifts} ) => {
     navigator.clipboard.writeText(copied_volunteer_names)
   }
 
-  const shiftType = ['Volunteer', 'Orientation', 'Pre-Dental', 'Dental Assistant One', 'Dental Assistant Two', 'Registered Dental Hygienist', 'Dentist']; // Different types of shifts
+  const shiftType = [
+    {value: 'Volunteer', label: 'Volunteer'},
+    {value: 'Orientation', label: 'Orientation'}, 
+    {value: 'Pre-Dental', label: 'Pre-Dental'},
+    {value: 'Dental Assistant One', label: 'Dental Assistant One'}, 
+    {value: 'Dental Assistant Two', label: 'Dental Assistant Two'},
+    {value: 'Registered Dental Hygienist', label: 'Registered Dental Hygienist'},
+    {value: 'Dentist', label: 'Dentist'}
+  ]; // Different types of shifts
 
   const columns = useMemo(
     () => [
@@ -200,11 +209,14 @@ const Shiftstable = ( {signups, shifts} ) => {
       {
         accessorKey: 'type', 
         header: 'Shift Type',
-        muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-          select: true, //change to select for a dropdown
+        muiTableBodyCellEditTextFieldProps: ({ row }) => ({
+          select: true, 
+          SelectProps: {
+            multiple: true
+          }, 
           children: shiftType.map((shift) => (
-            <MenuItem key={shift} value={shift}>
-              {shift}
+            <MenuItem key={shift.label} value={shift.value}>
+              {shift.label}
             </MenuItem>
           )),
         }),
@@ -336,7 +348,7 @@ const Shiftstable = ( {signups, shifts} ) => {
 export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => { 
   const [values, setValues] = useState(() => 
     columns.reduce((acc, column) => {
-      acc[column.accessorKey ?? ''] = column.accessorKey === 'type' ? '' : '';
+      acc[column.accessorKey ?? ''] = column.accessorKey === 'type' ? [] : '';
       return acc
     }, {})
   )
@@ -362,6 +374,7 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
                     <Select
                     label = "Shift Type"
                     id="shift-type"
+                    multiple
                     name={column.accessorKey}
                     value={values[column.accessorKey]}
                     onChange={(e) => setValues({...values, [e.target.name]: e.target.value})}
