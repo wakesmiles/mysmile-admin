@@ -95,7 +95,9 @@ const Shiftstable = ( {signups, shifts} ) => {
   }
 
   const handleCreateNewRow = (values) => {
-    values.type = values.type.map(type => type.label)
+    values.id = latest_id + 1
+    values.num_vols = 0
+    values.type = values.type.map(type => type.label.toLowerCase())
     post(values)  // API Post request
     tableData.push(values)
     setTableData([...tableData])
@@ -107,13 +109,12 @@ const Shiftstable = ( {signups, shifts} ) => {
     }
     const update_obj = {
       id: values.id,
-      shift_type: values.type.map((type) => type.toLowerCase()),
+      shift_type: values.type.map((type) => type.toLowerCase()).sort(),
       shift_date: values.date,
       start_time: values.start_time,
       end_time: values.end_time,
       remaining_slots: values.remaining_slots
     }
-    console.log(update_obj)
     try {
       const { error } = await supabase.from("shifts").update(update_obj).eq("id", values.id)
       if (error) {
@@ -138,6 +139,9 @@ const Shiftstable = ( {signups, shifts} ) => {
   }
 
   async function deleteRequest(values) {
+    if (values.original.id === "") {
+
+    }
     try {
       const { error } = await supabase.from("shifts").delete().eq('id', values.original.id)
       if (error) {
@@ -338,7 +342,7 @@ const Shiftstable = ( {signups, shifts} ) => {
         <div className="fixed top-0 left-0 h-full w-full bg-gray-800 bg-opacity-50 z-50 flex justify-center items-center">
           <div className="relative mx-auto mt-16 p-6 bg-white rounded-lg shadow-xl">
             <APIMessage message={apiResponse}/> 
-            <button className="absolute top-0 right-0 mt-4 mr-4 text-gray-500" type="button" aria-label="Close" onClick={() => location.reload()}>
+            <button className="absolute top-0 right-0 mt-4 mr-4 text-gray-500" type="button" aria-label="Close" onClick={() => setApiMsgOpen(false)}>
               <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>
@@ -413,7 +417,6 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
                   isMulti
                   options={shiftType}
                   name={column.id}
-                  value={values['type']}
                   onChange={(e) => setValues({...values, 'type': e})}
                   styles={customSelectStyles}
                   />
