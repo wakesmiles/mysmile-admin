@@ -139,9 +139,6 @@ const Shiftstable = ( {signups, shifts} ) => {
   }
 
   async function deleteRequest(values) {
-    if (values.original.id === "") {
-
-    }
     try {
       const { error } = await supabase.from("shifts").delete().eq('id', values.original.id)
       if (error) {
