@@ -23,7 +23,9 @@ import PeopleAltIcon from '@mui/icons-material/PeopleAlt'
 import APIMessage from './apimsg'
 import '../../styles/table.css'
 import { supabase } from '@/supabaseClient'
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import { FormControl, InputLabel, MenuItem } from '@mui/material'
+import CustomShiftTypeEdit from './selecttype'
+import Select from 'react-select'
 
 const Shiftstable = ( {signups, shifts} ) => {
 
@@ -32,6 +34,7 @@ const Shiftstable = ( {signups, shifts} ) => {
   const [volunteerModalMsg, setVolunteerModalMsg] = useState("")
   const [apiMsgOpen, setApiMsgOpen] = useState(false)  
   const [apiResponse, setApiResponse] = useState("")
+  const [editedType, setEditedType] = useState([]);
 
   const data = []
   const signup_data = signups.data
@@ -42,9 +45,7 @@ const Shiftstable = ( {signups, shifts} ) => {
     let obj = {}
     obj.id = shift.id  // only stored in data, not displayed in MUI table
     latest_id = Math.max(latest_id, shift.id)
-    obj.type = shift.shift_type.map((type) => {
-      return type.toUpperCase() + ', '
-    })
+    obj.type = shift.shift_type.sort()
     obj.date = shift.shift_date
     obj.start_time = shift.start_time
     obj.end_time = shift.end_time
@@ -94,12 +95,16 @@ const Shiftstable = ( {signups, shifts} ) => {
   }
 
   const handleCreateNewRow = (values) => {
+    values.type = values.type.map(type => type.label)
     post(values)  // API Post request
     tableData.push(values)
     setTableData([...tableData])
   }
 
   async function update(values) {
+    if (typeof values.type === 'string') {
+      values.type = values.type.split(', ')
+    }
     const update_obj = {
       id: values.id,
       shift_type: values.type.map((type) => type.toLowerCase()),
@@ -108,6 +113,7 @@ const Shiftstable = ( {signups, shifts} ) => {
       end_time: values.end_time,
       remaining_slots: values.remaining_slots
     }
+    console.log(update_obj)
     try {
       const { error } = await supabase.from("shifts").update(update_obj).eq("id", values.id)
       if (error) {
@@ -123,7 +129,9 @@ const Shiftstable = ( {signups, shifts} ) => {
   }
     
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
+    values.type = editedType.map((type) => type.label)
     tableData[row.index] = values
+    console.log(values)
     update(values)  // API UPDATE request
     setTableData([...tableData])
     exitEditingMode()
@@ -199,60 +207,59 @@ const Shiftstable = ( {signups, shifts} ) => {
     {value: 'Dentist', label: 'Dentist'}
   ]; // Different types of shifts
 
+  const handleShiftTypeUpdate = (updatedValues) => {
+    setEditedType(updatedValues)
+  }
+
+  
   const columns = useMemo(
-    () => [
-      {
-        accessorKey: 'id',
-        header: 'Shift ID',
-        enableEditing: false,
-      },
-      {
-        accessorKey: 'type', 
-        header: 'Shift Type',
-        muiTableBodyCellEditTextFieldProps: ({ row }) => ({
-          select: true, 
-          SelectProps: {
-            multiple: true
-          }, 
-          children: shiftType.map((shift) => (
-            <MenuItem key={shift.label} value={shift.value}>
-              {shift.label}
-            </MenuItem>
-          )),
-        }),
-      },
-      {
-        accessorKey: 'date',
-        header: 'Shift Date',
-      },
-      {
-        accessorKey: 'start_time', 
-        header: 'Start Time',
-      },
-      {
-        accessorKey: 'end_time',
-        header: 'End Time',
-      },
-      {
-        accessorKey: 'email_1',
-        header: 'Email 1',
-        enableEditing: false
-      },
-      {
-        accessorKey: 'email_2',
-        header: 'Email 2',
-        enableEditing: false
-      },
-      {
-        accessorKey: 'num_vols',
-        header: 'Filled',
-        enableEditing: false
-      },
-      {
-        accessorKey: 'remaining_slots',
-        header: 'Rem. Slots'
-      },
-    ],
+    () => {
+      return [
+        {
+          accessorKey: 'id',
+          header: 'Shift ID',
+          enableEditing: false,
+        },
+        {
+          id: 'type', 
+          accessorFn: (row) => typeof row.type === 'string' ? row.type : row.type.join(', '),
+          header: 'Shift Type',
+          name: 'type', // Make sure the name matches the data field name
+          Edit: (props) => <CustomShiftTypeEdit {...props} onUpdate={handleShiftTypeUpdate}/>
+        },
+        {
+          accessorKey: 'date',
+          header: 'Shift Date',
+        },
+        {
+          accessorKey: 'start_time', 
+          header: 'Start Time',
+        },
+        {
+          accessorKey: 'end_time',
+          header: 'End Time',
+        },
+        {
+          accessorKey: 'email_1',
+          header: 'Email 1',
+          enableEditing: false
+        },
+        {
+          accessorKey: 'email_2',
+          header: 'Email 2',
+          enableEditing: false
+        },
+        {
+          accessorKey: 'num_vols',
+          header: 'Filled',
+          enableEditing: false
+        },
+        {
+          accessorKey: 'remaining_slots',
+          header: 'Rem. Slots'
+        },
+      ]
+    },
     [],
   )
 
@@ -348,17 +355,47 @@ const Shiftstable = ( {signups, shifts} ) => {
 export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => { 
   const [values, setValues] = useState(() => 
     columns.reduce((acc, column) => {
-      acc[column.accessorKey ?? ''] = column.accessorKey === 'type' ? [] : '';
+      acc[column.accessorKey ?? ''] = column.id === 'type' ? [] : '';
       return acc
     }, {})
   )
 
-  const shiftType = ['Volunteer', 'Orientation', 'Pre-Dental', 'Dental Assistant One', 'Dental Assistant Two', 'Registered Dental Hygienist', 'Dentist']; // Different types of shifts
+  const shiftType = [
+    {value: 'volunteer', label: 'Volunteer'},
+    {value: 'orientation', label: 'Orientation'}, 
+    {value: 'pre-dental', label: 'Pre-Dental'},
+    {value: 'dental assistant one', label: 'Dental Assistant One'}, 
+    {value: 'dental assistant two', label: 'Dental Assistant Two'},
+    {value: 'registered dental hygienist', label: 'Registered Dental Hygienist'},
+    {value: 'dentist', label: 'Dentist'}
+  ];  
   
   const handleSubmit = () => {
     onSubmit(values)
     onClose()
   }
+  
+  const customSelectStyles = {
+    control: (provided) => ({
+      ...provided,
+      width: '100%',
+      minWidth: '300px',
+      gap: '1.5rem',
+      minHeight: '50px'
+    }),
+    menu: (provided) => ({
+      ...provided,
+      zIndex: 9999,
+    }),
+    menuList: (provided) => ({
+      ...provided,
+      maxHeight: '200px', 
+    }),
+    option: (provided) => ({
+      ...provided,
+      backgroundColor: ""
+    })
+  };
   
   return (
     <Dialog open={open}>
@@ -367,26 +404,19 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
         <form onSubmit={(e) => e.preventDefault()}>
           <Stack sx={{width: '100%', minWidth: { xs: '300px', sm: '360px', md: '400px'}, gap: '1.5rem'}}>
             {columns.filter(col => !(col.accessorKey === "email_1" || col.accessorKey === "email_2" || col.accessorKey === "id" || col.accessorKey === "num_vols")).map((column) => (
-              <div key={column.accessorKey}>
-                {column.accessorKey === 'type' ? (
-                  <FormControl>
-                    <InputLabel htmlFor="shift-type">Shift Type</InputLabel>
-                    <Select
-                    label = "Shift Type"
-                    id="shift-type"
-                    multiple
-                    name={column.accessorKey}
-                    value={values[column.accessorKey]}
-                    onChange={(e) => setValues({...values, [e.target.name]: e.target.value})}
-                    sx={{width: '100%', minWidth: { xs: '300px', sm: '360px', md: '400px'}, gap: '1.5rem'}}
-                    >
-                      {shiftType.map((type) => (
-                        <MenuItem key={type} value={type}>
-                          {type}
-                        </MenuItem>
-                      ))}
-                      </Select>
-                    </FormControl>
+              <div key={column.accessorKey || column.id}>
+                {column.id === 'type' ? (
+                  <Select
+                  label = "Shift Type"
+                  id="type"
+                  placeholder='Shift Type'
+                  isMulti
+                  options={shiftType}
+                  name={column.id}
+                  value={values['type']}
+                  onChange={(e) => setValues({...values, 'type': e})}
+                  styles={customSelectStyles}
+                  />
                 ):(
               <TextField sx={{width: '100%', minWidth: { xs: '300px', sm: '360px', md: '400px'}, gap: '1.5rem'}} // All inputs are same size as Shift Type
                 //key={column.accessorKey}
