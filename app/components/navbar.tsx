@@ -48,6 +48,9 @@ function Navbar({ logout }: NavProps): JSX.Element {
           <li>
             <NavButton onClick={() => navigate("/shifts/")}>Shifts</NavButton>
           </li>
+          <li>
+            <NavButton onClick={() => navigate("/files/")}>Files</NavButton>
+          </li>
         </ul>
       </div>
       <div onClick={() => logout()} className="flex justify-center items-center px-8 py-2 hover:cursor-pointer hover:bg-red-600 text-white text-center text-lg rounded-md mx-1">Logout</div>
