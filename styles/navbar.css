@@ -1,3 +1,7 @@
+.nav-bar{
+    z-index: 999;
+}
+
 .hover-underline-animation {
     display: inline-block;
     position: relative;

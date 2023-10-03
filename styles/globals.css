@@ -1,4 +1,201 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@tailwind variants;
+/* @tailwind variants; */
+
+:root {
+  --primary-color: #681296;
+  --secondary-color: #9654ba;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+h2 {
+  @apply text-lg font-medium leading-6 text-gray-900;
+}
+
+@screen sm {
+  .auth-container {
+    @apply rounded-md;
+  }
+  .auth-input {
+    @apply shadow-sm text-sm;
+  }
+  .auth-label {
+    @apply text-sm;
+  }
+  .profile-row {
+    @apply grid grid-cols-3 gap-4 px-6;
+  }
+}
+
+@layer utilities {
+  .scrollbar::-webkit-scrollbar {
+    width: 5px;
+    height: auto;
+  }
+
+  .scrollbar::-webkit-scrollbar-track {
+    border-radius: 100vh;
+    background: #ffffff;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb {
+    background: #e0cbcb;
+    border-radius: 100vh;
+    border: 3px solid #9654ba;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #ffffff;
+  }
+}
+
+.red-button-sm {
+  @apply inline-flex justify-center rounded-md border-transparent bg-red-500 py-1 px-3 text-sm font-medium text-white shadow-sm;
+}
+
+.container {
+  @apply w-full h-screen flex flex-row justify-center justify-items-center align-middle overflow-hidden bg-white;
+}
+
+.indigo-button-sm,
+.indigo-button-lg {
+  @apply inline-flex justify-center rounded-md border-transparent bg-indigo-600 py-1 px-3 text-sm font-medium text-white shadow-sm;
+}
+
+.indigo-button-sm {
+  @apply py-1 px-3;
+}
+
+.indigo-button-lg {
+  @apply py-2 px-4;
+}
+.indigo-button-sm:disabled,
+.indigo-button-lg:disabled {
+  @apply bg-gray-500;
+}
+
+.error {
+  @apply text-red-500 italic;
+}
+
+.navbar-item {
+  @apply relative overflow-hidden text-white text-ellipsis whitespace-nowrap rounded;
+}
+
+/**Volunteer Login + Registration****************************************/
+.auth-container {
+  @apply overflow-hidden shadow;
+  width: 550px;
+}
+
+.auth-input {
+  @apply mt-1 block w-full rounded-lg border-gray-300;
+}
+
+
+.auth-label {
+  @apply block font-medium text-gray-700 text-left;
+}
+
+
+.password-toggle {
+  @apply relative bottom-7 float-right right-3;
+}
+
+/**Volunteer Profile*************************/
+.profile-row {
+  @apply px-6 py-3 text-sm text-gray-900;
+}
+
+.profile-input-label {
+  @apply block text-sm text-gray-700 text-left;
+}
+
+.profile-input {
+  @apply mt-1 block w-full h-auto text-sm rounded-md border-gray-300;
+}
+
+/**Volunteer Schedule*************************/
+.table-header {
+  @apply py-2 px-3 text-base text-center font-medium;
+}
+.clock-button {
+  @apply text-indigo-600;
+}
+
+.clock-button:hover {
+  @apply text-indigo-800;
+}
+
+.clock-button:disabled {
+  @apply text-gray-500;
+}
+
+/** Boilerplate for future dark mode styling */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary-color: #a78bfa;
+    --secondary-color: #eef2ff;
+  }
+  html {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-neutral-900;
+  }
+
+  h2 {
+    @apply text-neutral-200;
+  }
+
+  span {
+    @apply text-neutral-200;
+  }
+  .container {
+    @apply bg-neutral-900;
+  }
+
+  /**Dark Mode Volunteer Login + Registration**/
+  .auth-label {
+    @apply text-neutral-300;
+  }
+  .auth-container {
+    @apply bg-neutral-800 border-neutral-600 rounded-lg border;
+  }
+
+  .auth-input {
+    @apply bg-neutral-900 border-neutral-600 text-neutral-100;
+  }
+  .password-toggle {
+    @apply text-neutral-100;
+  }
+
+  /**Dark mode Volunteer Profile**/
+  .profile-row {
+    @apply text-neutral-200;
+  }
+
+  .profile-input-label {
+    @apply text-neutral-300;
+  }
+
+  .profile-input {
+    @apply border-neutral-700 bg-neutral-800;
+  }
+  /* Dark Mode Volunteer Schedule */
+  .table-header {
+    @apply text-neutral-200;
+  }
+}

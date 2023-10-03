@@ -1,7 +1,7 @@
-import "../../styles/defaultpage.css"
 import { useState } from "react"
 import { supabase } from "../../supabaseClient"
 import Link from "next/link"
+import { purple } from "@mui/material/colors"
 
 export function FetchUser() {
     const [loading, setLoading] = useState(true)
@@ -25,13 +25,14 @@ export function FetchUser() {
     return [user, loading];
 }
 
+/** Intermediate UI for attempting to load page while unauthenticated */
 export default function UnAuthorizedPage() {
     return (
-      <div className="default-bg">
-          <div className="default-bg-img">
-            <div className="welcome-msg-container">
-              <h1>You are not authorized to view this page.</h1>
-              <Link href="/">Click here to login</Link>
+      <div className="flex w-screen h-screen justify-center items-center">
+          <div className="flex flex-col text-center">
+            <h1>No user data... invalid/expired session or restricted access.</h1>
+            <div className="font-medium hover:underline hover:underline-offset-4" >
+              <Link style={{color: '#9654ba' }} href="/">Click here to sign in or make an account.</Link>
             </div>
           </div>
       </div>
