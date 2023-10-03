@@ -52,7 +52,9 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
     let corresponding_shift = shifts_data.filter(shift => shift.id === signup.shift_id)[0]
     obj.date = corresponding_shift.shift_date
     obj.start_time = corresponding_shift.start_time
-    obj.shift_type = corresponding_shift.shift_type.toUpperCase()
+    obj.shift_type = corresponding_shift.shift_type.map((type) => {
+      return type.toUpperCase() + ', '
+    })
     obj.end_time = corresponding_shift.end_time
     obj.rem_slots = corresponding_shift.remaining_slots
 
