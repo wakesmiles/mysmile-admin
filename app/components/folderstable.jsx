@@ -9,7 +9,7 @@ const FoldersTable = ({ folders }) => {
                     <h2 className="flex justify-center text-lg">Folders</h2>
                     <div className="grid-cols-2">
                         {folders.map((folder, index) => (
-                            <div className="py-3" id={index}>
+                            <div className="py-3" key={index}>
                                 <FolderIcon sx={{ color: "white", fontSize: "25pt"}} />
                                 <Link className="text-lg text-white" href={`files/${folder.name}`}>{folder.name.replace(/_/g, ' ').slice(0, -5)}</Link>
                             </div>
