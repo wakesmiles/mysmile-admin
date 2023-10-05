@@ -26,7 +26,6 @@ export default function FilesPage() {
     }).then((data, err) => {
       if (data) {
         setFolders(data.data);
-        console.log(data.data)
       }
     })
   }
