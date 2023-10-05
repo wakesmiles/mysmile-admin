@@ -41,7 +41,7 @@ const FilesTable = ({ filesInit, folder }) => {
                 <h2 className="text-white">{`${folder.replace(/_/g, ' ').slice(0, -6)}'s Files`}</h2>
               </div>
               <div className="border-t border-gray-200 p-6  dark:border-neutral-800">
-                <div className="overflow-y-scroll w-full h-full max-w-full max-h-72 scrollbar">
+                <div className="overflow-y-scroll overflow-x-hidden w-full h-full max-w-full max-h-72 pr-5">
                   <table className="orientation-shifts mt-5 w-full">
                     <thead className="mb-5 border-b border-gray-200 dark:border-neutral-800">
                       <tr className="grid w-full grid-cols-5 text-left mb-2 dark:text-neutral-200">
