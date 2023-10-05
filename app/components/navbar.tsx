@@ -15,7 +15,7 @@ interface ButtonProps{
 
 function NavButton({ children, onClick }: ButtonProps): JSX.Element {
   return (
-    <div className="hover-underline-animation hover:cursor-pointer text-white text-center py-2 px-4 rounded-md"
+    <div className="nav-bar hover-underline-animation hover:cursor-pointer text-white text-center py-2 px-4 rounded-md"
     onClick={onClick}>
       {children}
     </div>

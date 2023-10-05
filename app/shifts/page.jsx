@@ -34,6 +34,7 @@ export default function ShiftsPage() {
         await supabase
           .from("shifts")
           .select()
+          .order('id')
           .then((shifts, err) => {
             if (shifts) {
               setShifts(shifts)
