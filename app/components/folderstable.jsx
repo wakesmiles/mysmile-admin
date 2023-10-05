@@ -27,7 +27,7 @@ const FoldersTable = ({ folders }) => {
                         <input type="search" ref={searchRef} id="default-search" onChange={searchChange} class="shadow bg-neutral-900 block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search Folders" />
                     </div>
                 </div>
-                <div className="shadow h-4/5 w-4/5 border-transparent bg-neutral-900 border-2 border-neutral-800 grid-cols-2 px-5 py-5 overflow-y-scroll rounded-b-xl">
+                <div className="shadow max-h-72 w-4/5 overflow-y-scroll border-transparent bg-neutral-900 border-2 border-neutral-800 grid-cols-2 px-5 py-5 rounded-b-xl">
                     {useFolders.map((folder, index) => (
                         <div className="py-1" key={index}>
                             <Link href={`files/${folder.name}`}>
