@@ -1,27 +1,31 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { supabase } from "../../supabaseClient"
 import Link from "next/link"
-import { purple } from "@mui/material/colors"
 
 export function FetchUser() {
     const [loading, setLoading] = useState(true)
     const [user, setUser] = useState(null)
-    supabase.auth.getUser().then(async (data, err) => {
-      if (!data.data.user) {
-        setLoading(false)
-        return data.data.user
-      }
-      const id = data.data.user.id
-      await supabase.from('admins')
-      .select()
-      .eq("id", id)
-      .then((admin, err) => {
-        if (admin) {
-          setUser(admin);
-          setLoading(false)
+    async function getAdmin() {
+      await supabase.auth.getUser().then(async (data, err) => {
+        if (data) {
+          const id = data.data.user.id
+          await supabase.from('admins')
+          .select()
+          .eq("id", id)
+          .then(async (admin, err) => {
+            if (admin) {
+              setUser(admin);
+              setLoading(false)
+            }
+          })
         }
       })
-    })
+    }
+
+    useEffect(() => {
+      getAdmin()
+    }, [])
+
     return [user, loading];
 }
 

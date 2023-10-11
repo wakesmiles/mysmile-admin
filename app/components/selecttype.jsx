@@ -35,13 +35,6 @@ const CustomShiftTypeEdit = ({ cell, column, table, onUpdate }) => {
     onUpdate(vals)
   }
 
-  const style = {
-    option: (provided) => ({
-      ...provided,
-      backgroundColor: ""
-    })
-  };
-
   return (
     <div>
         <label>Shift Type</label>
@@ -50,7 +43,6 @@ const CustomShiftTypeEdit = ({ cell, column, table, onUpdate }) => {
             isMulti={true}
             value={values}
             onChange={ handleSelectChange }
-            styles={style}
         />
     </div>
   );

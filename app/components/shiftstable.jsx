@@ -391,10 +391,6 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
     menuList: (provided) => ({
       ...provided,
       maxHeight: '200px', 
-    }),
-    option: (provided) => ({
-      ...provided,
-      backgroundColor: ""
     })
   };
   
