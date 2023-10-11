@@ -6,20 +6,25 @@ export function FetchUser() {
     const [loading, setLoading] = useState(true)
     const [user, setUser] = useState(null)
     async function getAdmin() {
-      await supabase.auth.getUser().then(async (data, err) => {
-        if (data) {
-          const id = data.data.user.id
-          await supabase.from('admins')
-          .select()
-          .eq("id", id)
-          .then(async (admin, err) => {
-            if (admin) {
-              setUser(admin);
-              setLoading(false)
-            }
-          })
-        }
-      })
+      try {
+        await supabase.auth.getUser().then(async (data, err) => {
+          if (data.data.user) {
+            const id = data.data.user.id
+            await supabase.from('admins')
+            .select()
+            .eq("id", id)
+            .then(async (admin, err) => {
+              if (admin) {
+                setUser(admin);
+                setLoading(false)
+              }
+            })
+          }
+        })
+      } catch (e) {
+      } finally {
+        setLoading(false)
+      }
     }
 
     useEffect(() => {
