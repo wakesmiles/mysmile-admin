@@ -243,6 +243,7 @@ const Profiletable = ( {profiles, signups} ) => {
         initialState={{ columnVisibility: { id: false } }}
         editingMode="modal"
         enableColumnOrdering
+        enableRowSelection
         enableEditing
         onEditingRowSave={handleSaveRowEdits}
         onEditingRowCancel={handleCancelRowEdits}

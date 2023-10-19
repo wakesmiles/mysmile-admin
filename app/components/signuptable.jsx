@@ -260,6 +260,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
         editingMode="modal"
         enableColumnOrdering
         enableEditing
+        enableRowSelection
         onEditingRowSave={handleSaveRowEdits}
         renderRowActions={({ row, table }) => (
           <Box sx={{ display: 'flex', gap: '1rem'}}>
