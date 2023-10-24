@@ -1,6 +1,7 @@
 'use client'
 import { useCallback, useMemo, useState } from 'react'
 import MaterialReactTable from "material-react-table"
+import { mkConfig, download, generateCsv } from 'export-to-csv'
 
 // According to MUI docs this imports faster than doing: import { Box, Button, ... } from '@mui/material'
 // More info: https://mui.com/material-ui/guides/minimizing-bundle-size/
@@ -266,6 +267,36 @@ const Shiftstable = ( {signups, shifts} ) => {
     [],
   )
 
+  const conf = {
+    fieldSeparator: ',',
+    quoteStrings: '"',
+    decimalSeparator: '.',
+    showLabels: true,
+    useBom: true,
+    useKeysAsHeaders: true,
+    headers: columns.map((c) => c.header),
+  };
+  const csvConfig = mkConfig(conf);
+  
+  const handleExportData = () => {
+    const dynamicKey = "volunteers";
+
+    const csv = generateCsv(csvConfig)(tableData.map((row) => {
+      let {[dynamicKey]: _, ...rest} = row;
+      return rest
+    }))
+    download(csvConfig)(csv)
+  }
+
+  const handleExportSelectedRows = (rows) => {
+    const dynamicKey = "volunteers";
+    const csv = generateCsv(csvConfig)(rows.map((r) => {
+      let {[dynamicKey]: _, ...rest} = r.original;
+      return rest
+    }))
+    download(csvConfig)(csv)
+  }
+
   return (
     <div>
       <h2 className="p-4 text-white">Shifts Table</h2>
@@ -318,8 +349,12 @@ const Shiftstable = ( {signups, shifts} ) => {
             </Tooltip>
           </Box>
         )}
-        renderTopToolbarCustomActions={() => (
-          <Button color="primary" onClick={() => setCreateModalOpen(true)} variant="contained">Create New Shift</Button>
+        renderTopToolbarCustomActions={({table}) => (
+          <Box>
+            <Button color="primary" onClick={() => setCreateModalOpen(true)} variant="contained">Create New Shift</Button>
+            <Button sx={{marginX: 5}} color="primary" onClick={handleExportData} variant="contained">Export All Data</Button>
+            <Button disabled={table.getSelectedRowModel().rows.length == 0} color="primary" onClick={() => handleExportSelectedRows(table.getSelectedRowModel().rows)} variant="contained">Export Selected Rows</Button>
+          </Box>
         )}
       />
 
