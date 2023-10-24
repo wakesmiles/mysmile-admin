@@ -8,10 +8,12 @@ const CustomShiftTypeEdit = ({ cell, column, table, onUpdate }) => {
         {value: 'volunteer', label: 'Volunteer'},
         {value: 'orientation', label: 'Orientation'}, 
         {value: 'pre-dental', label: 'Pre-Dental'},
-        {value: 'dental assistant one', label: 'Dental Assistant One'}, 
-        {value: 'dental assistant two', label: 'Dental Assistant Two'},
+        {value: 'dental assistant I', label: 'Dental Assistant I'}, 
+        {value: 'dental assistant II', label: 'Dental Assistant II'},
         {value: 'registered dental hygienist', label: 'Registered Dental Hygienist'},
-        {value: 'dentist', label: 'Dentist'}
+        {value: 'dentist', label: 'Dentist'},
+        {value: 'admin', label: 'Admin'},
+        {value: 'interpreter', label: 'Interpreter'}
     ];  
   // Access the current cell's data
   const cellData = cell.getValue().split(', ');
