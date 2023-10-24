@@ -1,7 +1,5 @@
 import {ReactNode} from 'react'
 import "../../styles/navbar.css"
-import { useRouter } from 'next/navigation'
-import { Url } from 'next/dist/shared/lib/router/router'
 
 interface NavProps{
   setContent: Function
@@ -15,41 +13,32 @@ interface ButtonProps{
 
 function NavButton({ children, onClick }: ButtonProps): JSX.Element {
   return (
-    <div className="nav-bar hover-underline-animation hover:cursor-pointer text-white text-center py-2 px-4 rounded-md"
+    <div className="hover-underline-animation hover:cursor-pointer text-white text-center py-2 px-4 rounded-md"
     onClick={onClick}>
       {children}
     </div>
   )
 }
 
-
-
-function Navbar({ logout }: NavProps): JSX.Element {
-  const router = useRouter()
-  const navigate = async(path: string) => {
-    router.push(path)
-  }
+function Navbar({ setContent, logout }: NavProps): JSX.Element {
   return (
     <nav className="w-50 mr-50 flex justify-between items-center px-2 py-2 z-999">
       <div> 
         <ul className="flex p-2 text-lg">
           <li>
-            <NavButton onClick={() => navigate("/home/")}>Home</NavButton>
+            <NavButton onClick={() => setContent("None")}>Home</NavButton>
           </li>
           <li>
-            <NavButton onClick={() => navigate('/stats/')}>Stats</NavButton>
+            <NavButton onClick={() => setContent("Stats")}>Stats</NavButton>
           </li>
           <li>
-            <NavButton onClick={() => navigate("/profiles/")}>Profiles</NavButton>
+            <NavButton onClick={() => setContent("Profiles")}>Profiles</NavButton>
           </li>       
           <li>
-            <NavButton onClick={() => navigate("/signups/")}>Signups</NavButton>
+            <NavButton onClick={() => setContent("Signups")}>Signups</NavButton>
           </li>
           <li>
-            <NavButton onClick={() => navigate("/shifts/")}>Shifts</NavButton>
-          </li>
-          <li>
-            <NavButton onClick={() => navigate("/files/")}>Files</NavButton>
+            <NavButton onClick={() => setContent("Shifts")}>Shifts</NavButton>
           </li>
         </ul>
       </div>
