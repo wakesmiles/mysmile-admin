@@ -202,10 +202,12 @@ const Shiftstable = ( {signups, shifts} ) => {
     {value: 'Volunteer', label: 'Volunteer'},
     {value: 'Orientation', label: 'Orientation'}, 
     {value: 'Pre-Dental', label: 'Pre-Dental'},
-    {value: 'Dental Assistant One', label: 'Dental Assistant One'}, 
-    {value: 'Dental Assistant Two', label: 'Dental Assistant Two'},
+    {value: 'Dental Assistant I', label: 'Dental Assistant I'}, 
+    {value: 'Dental Assistant II', label: 'Dental Assistant II'},
     {value: 'Registered Dental Hygienist', label: 'Registered Dental Hygienist'},
-    {value: 'Dentist', label: 'Dentist'}
+    {value: 'Dentist', label: 'Dentist'},
+    {value: 'Admin', label: 'Admin'},
+    {value: 'Interpreter', label: 'Interpreter'}
   ]; // Different types of shifts
 
   const handleShiftTypeUpdate = (updatedValues) => {
@@ -366,10 +368,12 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
     {value: 'volunteer', label: 'Volunteer'},
     {value: 'orientation', label: 'Orientation'}, 
     {value: 'pre-dental', label: 'Pre-Dental'},
-    {value: 'dental assistant one', label: 'Dental Assistant One'}, 
-    {value: 'dental assistant two', label: 'Dental Assistant Two'},
+    {value: 'dental assistant I', label: 'Dental Assistant I'}, 
+    {value: 'dental assistant II', label: 'Dental Assistant II'},
     {value: 'registered dental hygienist', label: 'Registered Dental Hygienist'},
-    {value: 'dentist', label: 'Dentist'}
+    {value: 'dentist', label: 'Dentist'},
+    {value: 'admin', label: 'Admin'},
+    {value: 'interpreter', label: 'Interpreter'}
   ];  
   
   const handleSubmit = () => {

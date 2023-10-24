@@ -136,7 +136,7 @@ const Profiletable = ( {profiles, signups} ) => {
       }
     }
   )
-  const shiftType = ['Volunteer', 'Orientation', 'Pre-Dental', 'Dental Assistant One', 'Dental Assistant Two', 'Registered Dental Hygienist', 'Dentist']; // Different types of shifts
+  const shiftType = ['Volunteer', 'Orientation', 'Pre-Dental', 'Dental Assistant I', 'Dental Assistant II', 'Registered Dental Hygienist', 'Dentist', 'Admin', 'Interpreter']; // Different types of shifts
 
   const columns = useMemo( // input data for the table library
     () => [
