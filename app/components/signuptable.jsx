@@ -243,41 +243,6 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
       ],
       [],
     )
-
-    const csvOptions = {
-      fieldSeparator: ',',
-      quoteStrings: '"',
-      decimalSeparator: '.',
-      showLabels: true,
-      useBom: true,
-      //useKeysAsHeaders: false,
-      //headers: columns.map((c) => c.header),
-    }
-
-   /*const csvExporter = new ExportToCsv(csvOptions)
-    const handleExportRows = () => {
-      //csvExporter.generateCsv(data)
-      generateCsv(tableData)
-    }*/
-
-   /* const handleExportRows = () => {
-      const sheet = XLSX.utils.json_to_sheet(data)
-      const book = XLSX.utils.book_new()
-      XLSX.utils.book_append_sheet(book,sheet,"Volunteers")
-    }*/
-
-   /* function handleExportRow() {
-      downloadExcel({
-        fileName: "Wake Smiles Volunteers",
-        sheet: "Volunteer",
-        tablePayload: {
-          
-          body: tableData
-        }
-      })
-    }*/
-
-
   return (
     <div>
       <h2 className="p-4 text-white">Signups Table</h2>
@@ -298,7 +263,6 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
         enableEditing
         enableRowSelection
         onEditingRowSave={handleSaveRowEdits}
-        enableRowSelection
         renderRowActions={({ row, table }) => (
           <Box sx={{ display: 'flex', gap: '1rem'}}>
             <Tooltip arrow placement="bottom" title="Edit">
@@ -316,7 +280,6 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
         renderTopToolbarCustomActions={({table}) => (
           <Box>
           <Button color="primary" onClick={() => setCreateModalOpen(true)} variant="contained">Create New Signup</Button>
-          <Button color="primary" startIcon = {<FileDownloadIcon />} variant="contained">Export All Data</Button>
           </Box>
         )}
         /*renderTopToolbarCustomActions={() => (
