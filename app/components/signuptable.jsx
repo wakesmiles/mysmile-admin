@@ -17,9 +17,7 @@ import Tooltip from '@mui/material/Tooltip'
 import Delete from '@mui/icons-material/Delete'
 import Edit from '@mui/icons-material/Edit'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'
-import { ExportToCsv, generateCsv } from 'export-to-csv'
-import XLSX from 'xlsx'
-import { DownloadTableExcel, downloadExcel } from "react-export-table-to-excel"
+
 
 import APIMessage from './apimsg'
 import '../../styles/table.css'
