@@ -281,6 +281,7 @@ const Shiftstable = ( {signups, shifts} ) => {
         initialState={{ columnVisibility: { id: false } }}  // hide id by default
         editingMode="modal"
         enableColumnOrdering
+        enableRowSelection
         enableEditing
         onEditingRowSave={handleSaveRowEdits}
         renderRowActions={({ row, table }) => (
