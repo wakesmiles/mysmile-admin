@@ -16,6 +16,8 @@ import TextField from '@mui/material/TextField'
 import Tooltip from '@mui/material/Tooltip'
 import Delete from '@mui/icons-material/Delete'
 import Edit from '@mui/icons-material/Edit'
+import FileDownloadIcon from '@mui/icons-material/FileDownload'
+
 
 import APIMessage from './apimsg'
 import '../../styles/table.css'
@@ -47,11 +49,11 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
     obj.clock_in = signup.clock_in ?? "" // if we get null from database, convert to ""
     obj.clock_out = signup.clock_out ?? ""
     obj.hours = signup.hours ?? ""
-    obj.email = signup.email
     
     let corresponding_shift = shifts_data.filter(shift => shift.id === signup.shift_id)[0]
     obj.date = corresponding_shift.shift_date
     obj.start_time = corresponding_shift.start_time
+    obj.shift_type = corresponding_shift.shift_type.sort()
     obj.end_time = corresponding_shift.end_time
     obj.rem_slots = corresponding_shift.remaining_slots
 
@@ -63,7 +65,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
   async function post(values) {
 
     // find shift id based on date, start_time, end_time 
-    const shift_for_given_date = shifts_data.filter(shift => (shift.shift_date == values.date && shift.start_time === values.start_time && shift.end_time === values.end_time))[0]
+    const shift_for_given_date = shifts_data.filter(shift => (shift.shift_date == values.date && shift.start_time === values.start_time && shift.end_time === values.end_time && shift.shift_type === values.shift_type))[0]
 
     // find user for given id
     let volunteer_for_given_info = profiles_data.filter(vol => (vol.first_name === values.first_name && vol.last_name === values.last_name && vol.email === values.email))[0]
@@ -192,6 +194,12 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
         enableEditing: false
       },
       {
+        id: 'type', 
+        accessorFn: (row) => typeof row.shift_type === 'string' ? row.shift_type : row.shift_type.join(', '),        
+        header: 'Shift Type',
+        enableEditing: false
+      },
+      {
         accessorKey: 'date', 
         header: 'Shift Date',
         enableEditing: false
@@ -207,16 +215,17 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
         enableEditing: false
       },
       {
+        accessorKey: 'email',
+        header: 'Email',
+       // enableClickToCopy: true,
+      },
+      {
         accessorKey: 'first_name',
         header: 'First Name',
       },
       {
         accessorKey: 'last_name',
         header: 'Last Name',
-      },
-      {
-        accessorKey: 'email',
-        header: 'Email',
       },
       {
         accessorKey: 'clock_in',
@@ -235,6 +244,40 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
       [],
     )
 
+    const csvOptions = {
+      fieldSeparator: ',',
+      quoteStrings: '"',
+      decimalSeparator: '.',
+      showLabels: true,
+      useBom: true,
+      //useKeysAsHeaders: false,
+      //headers: columns.map((c) => c.header),
+    }
+
+   /*const csvExporter = new ExportToCsv(csvOptions)
+    const handleExportRows = () => {
+      //csvExporter.generateCsv(data)
+      generateCsv(tableData)
+    }*/
+
+   /* const handleExportRows = () => {
+      const sheet = XLSX.utils.json_to_sheet(data)
+      const book = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(book,sheet,"Volunteers")
+    }*/
+
+   /* function handleExportRow() {
+      downloadExcel({
+        fileName: "Wake Smiles Volunteers",
+        sheet: "Volunteer",
+        tablePayload: {
+          
+          body: tableData
+        }
+      })
+    }*/
+
+
   return (
     <div>
       <h2 className="p-4 text-white">Signups Table</h2>
@@ -242,18 +285,19 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
         displayColumnDefOptions={{
           'mrt-row-actions': {
             muiTableHeadCellProps: {
-              align: 'center',
+              align: 'center',  
             },
             size: 120,
           },
         }}
         columns={columns} 
-        data={tableData} 
-        initialState={{ columnVisibility: { email: false, id: false } }}
+        data={tableData}
+        //initialState={{ columnVisibility: { email: false, id: false } }}
         editingMode="modal"
         enableColumnOrdering
         enableEditing
         onEditingRowSave={handleSaveRowEdits}
+        enableRowSelection
         renderRowActions={({ row, table }) => (
           <Box sx={{ display: 'flex', gap: '1rem'}}>
             <Tooltip arrow placement="bottom" title="Edit">
@@ -268,9 +312,15 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
             </Tooltip>
           </Box>
         )}
-        renderTopToolbarCustomActions={() => (
+        renderTopToolbarCustomActions={({table}) => (
+          <Box>
           <Button color="primary" onClick={() => setCreateModalOpen(true)} variant="contained">Create New Signup</Button>
+          <Button color="primary" startIcon = {<FileDownloadIcon />} variant="contained">Export All Data</Button>
+          </Box>
         )}
+        /*renderTopToolbarCustomActions={() => (
+          <Button color="primary" onClick={() => setCreateModalOpen(true)} variant="contained">Create New Signup</Button>
+        )}*/
       />
 
       <CreateNewModal

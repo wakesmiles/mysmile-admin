@@ -1,5 +1,7 @@
 import {ReactNode} from 'react'
 import "../../styles/navbar.css"
+import { useRouter } from 'next/navigation'
+import { Url } from 'next/dist/shared/lib/router/router'
 
 interface NavProps{
   setContent: Function
@@ -13,32 +15,41 @@ interface ButtonProps{
 
 function NavButton({ children, onClick }: ButtonProps): JSX.Element {
   return (
-    <div className="hover-underline-animation hover:cursor-pointer text-white text-center py-2 px-4 rounded-md"
+    <div className="nav-bar hover-underline-animation hover:cursor-pointer text-white text-center py-2 px-4 rounded-md"
     onClick={onClick}>
       {children}
     </div>
   )
 }
 
-function Navbar({ setContent, logout }: NavProps): JSX.Element {
+
+
+function Navbar({ logout }: NavProps): JSX.Element {
+  const router = useRouter()
+  const navigate = async(path: string) => {
+    router.push(path)
+  }
   return (
     <nav className="w-50 mr-50 flex justify-between items-center px-2 py-2 z-999">
       <div> 
         <ul className="flex p-2 text-lg">
           <li>
-            <NavButton onClick={() => setContent("None")}>Home</NavButton>
+            <NavButton onClick={() => navigate("/home/")}>Home</NavButton>
           </li>
           <li>
-            <NavButton onClick={() => setContent("Stats")}>Stats</NavButton>
+            <NavButton onClick={() => navigate('/stats/')}>Stats</NavButton>
           </li>
           <li>
-            <NavButton onClick={() => setContent("Profiles")}>Profiles</NavButton>
+            <NavButton onClick={() => navigate("/profiles/")}>Profiles</NavButton>
           </li>       
           <li>
-            <NavButton onClick={() => setContent("Signups")}>Signups</NavButton>
+            <NavButton onClick={() => navigate("/signups/")}>Signups</NavButton>
           </li>
           <li>
-            <NavButton onClick={() => setContent("Shifts")}>Shifts</NavButton>
+            <NavButton onClick={() => navigate("/shifts/")}>Shifts</NavButton>
+          </li>
+          <li>
+            <NavButton onClick={() => navigate("/files/")}>Files</NavButton>
           </li>
         </ul>
       </div>

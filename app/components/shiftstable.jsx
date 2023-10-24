@@ -23,6 +23,9 @@ import PeopleAltIcon from '@mui/icons-material/PeopleAlt'
 import APIMessage from './apimsg'
 import '../../styles/table.css'
 import { supabase } from '@/supabaseClient'
+import { FormControl, InputLabel, MenuItem } from '@mui/material'
+import CustomShiftTypeEdit from './selecttype'
+import Select from 'react-select'
 
 const Shiftstable = ( {signups, shifts} ) => {
 
@@ -31,18 +34,18 @@ const Shiftstable = ( {signups, shifts} ) => {
   const [volunteerModalMsg, setVolunteerModalMsg] = useState("")
   const [apiMsgOpen, setApiMsgOpen] = useState(false)  
   const [apiResponse, setApiResponse] = useState("")
+  const [editedType, setEditedType] = useState([]);
 
   const data = []
   const signup_data = signups.data
   const shifts_data = shifts.data
 
   let latest_id = 0  // variable to find most recent ID
-
   shifts_data.forEach(shift => {  // create an object that gets info from database and generate info for table
     let obj = {}
     obj.id = shift.id  // only stored in data, not displayed in MUI table
     latest_id = Math.max(latest_id, shift.id)
-    obj.type = shift.shift_type.toUpperCase()
+    obj.type = shift.shift_type.sort()
     obj.date = shift.shift_date
     obj.start_time = shift.start_time
     obj.end_time = shift.end_time
@@ -70,7 +73,7 @@ const Shiftstable = ( {signups, shifts} ) => {
   async function post(values) {  // POST request
     const new_shift = {
       id: latest_id + 1,
-      shift_type: values.type.toLowerCase(),
+      shift_type: values.type.map((type) => type.toLowerCase()),
       shift_date: values.date,
       start_time: values.start_time + ".000Z",
       end_time: values.end_time + ".000Z",
@@ -92,15 +95,21 @@ const Shiftstable = ( {signups, shifts} ) => {
   }
 
   const handleCreateNewRow = (values) => {
+    values.id = latest_id + 1
+    values.num_vols = 0
+    values.type = values.type.map(type => type.label.toLowerCase())
     post(values)  // API Post request
     tableData.push(values)
     setTableData([...tableData])
   }
 
   async function update(values) {
+    if (typeof values.type === 'string') {
+      values.type = values.type.split(', ')
+    }
     const update_obj = {
       id: values.id,
-      shift_type: values.type,
+      shift_type: values.type.map((type) => type.toLowerCase()).sort(),
       shift_date: values.date,
       start_time: values.start_time,
       end_time: values.end_time,
@@ -121,7 +130,9 @@ const Shiftstable = ( {signups, shifts} ) => {
   }
     
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
+    values.type = editedType.map((type) => type.label)
     tableData[row.index] = values
+    console.log(values)
     update(values)  // API UPDATE request
     setTableData([...tableData])
     exitEditingMode()
@@ -187,49 +198,71 @@ const Shiftstable = ( {signups, shifts} ) => {
     navigator.clipboard.writeText(copied_volunteer_names)
   }
 
+  const shiftType = [
+    {value: 'Volunteer', label: 'Volunteer'},
+    {value: 'Orientation', label: 'Orientation'}, 
+    {value: 'Pre-Dental', label: 'Pre-Dental'},
+    {value: 'Dental Assistant I', label: 'Dental Assistant I'}, 
+    {value: 'Dental Assistant II', label: 'Dental Assistant II'},
+    {value: 'Registered Dental Hygienist', label: 'Registered Dental Hygienist'},
+    {value: 'Dentist', label: 'Dentist'},
+    {value: 'Admin', label: 'Admin'},
+    {value: 'Interpreter', label: 'Interpreter'}
+  ]; // Different types of shifts
+
+  const handleShiftTypeUpdate = (updatedValues) => {
+    setEditedType(updatedValues)
+  }
+
+  
   const columns = useMemo(
-    () => [
-      {
-        accessorKey: 'id',
-        header: 'Shift ID',
-        enableEditing: false,
-      },
-      {
-        accessorKey: 'type', 
-        header: 'Shift Type',
-      },
-      {
-        accessorKey: 'date',
-        header: 'Shift Date',
-      },
-      {
-        accessorKey: 'start_time', 
-        header: 'Start Time',
-      },
-      {
-        accessorKey: 'end_time',
-        header: 'End Time',
-      },
-      {
-        accessorKey: 'email_1',
-        header: 'Email 1',
-        enableEditing: false
-      },
-      {
-        accessorKey: 'email_2',
-        header: 'Email 2',
-        enableEditing: false
-      },
-      {
-        accessorKey: 'num_vols',
-        header: 'Filled',
-        enableEditing: false
-      },
-      {
-        accessorKey: 'remaining_slots',
-        header: 'Rem. Slots'
-      },
-    ],
+    () => {
+      return [
+        {
+          accessorKey: 'id',
+          header: 'Shift ID',
+          enableEditing: false,
+        },
+        {
+          id: 'type', 
+          accessorFn: (row) => typeof row.type === 'string' ? row.type : row.type.join(', '),
+          header: 'Shift Type',
+          name: 'type', // Make sure the name matches the data field name
+          Edit: (props) => <CustomShiftTypeEdit {...props} onUpdate={handleShiftTypeUpdate}/>
+        },
+        {
+          accessorKey: 'date',
+          header: 'Shift Date',
+        },
+        {
+          accessorKey: 'start_time', 
+          header: 'Start Time',
+        },
+        {
+          accessorKey: 'end_time',
+          header: 'End Time',
+        },
+        {
+          accessorKey: 'email_1',
+          header: 'Email 1',
+          enableEditing: false
+        },
+        {
+          accessorKey: 'email_2',
+          header: 'Email 2',
+          enableEditing: false
+        },
+        {
+          accessorKey: 'num_vols',
+          header: 'Filled',
+          enableEditing: false
+        },
+        {
+          accessorKey: 'remaining_slots',
+          header: 'Rem. Slots'
+        },
+      ]
+    },
     [],
   )
 
@@ -308,7 +341,7 @@ const Shiftstable = ( {signups, shifts} ) => {
         <div className="fixed top-0 left-0 h-full w-full bg-gray-800 bg-opacity-50 z-50 flex justify-center items-center">
           <div className="relative mx-auto mt-16 p-6 bg-white rounded-lg shadow-xl">
             <APIMessage message={apiResponse}/> 
-            <button className="absolute top-0 right-0 mt-4 mr-4 text-gray-500" type="button" aria-label="Close" onClick={() => location.reload()}>
+            <button className="absolute top-0 right-0 mt-4 mr-4 text-gray-500" type="button" aria-label="Close" onClick={() => setApiMsgOpen(false)}>
               <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>
@@ -322,18 +355,48 @@ const Shiftstable = ( {signups, shifts} ) => {
   )
 }
 
-export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
+export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => { 
   const [values, setValues] = useState(() => 
     columns.reduce((acc, column) => {
-      acc[column.accessorKey ?? ''] = ''
+      acc[column.accessorKey ?? ''] = column.id === 'type' ? [] : '';
       return acc
     }, {})
   )
+
+  const shiftType = [
+    {value: 'volunteer', label: 'Volunteer'},
+    {value: 'orientation', label: 'Orientation'}, 
+    {value: 'pre-dental', label: 'Pre-Dental'},
+    {value: 'dental assistant I', label: 'Dental Assistant I'}, 
+    {value: 'dental assistant II', label: 'Dental Assistant II'},
+    {value: 'registered dental hygienist', label: 'Registered Dental Hygienist'},
+    {value: 'dentist', label: 'Dentist'},
+    {value: 'admin', label: 'Admin'},
+    {value: 'interpreter', label: 'Interpreter'}
+  ];  
   
   const handleSubmit = () => {
     onSubmit(values)
     onClose()
   }
+  
+  const customSelectStyles = {
+    control: (provided) => ({
+      ...provided,
+      width: '100%',
+      minWidth: '300px',
+      gap: '1.5rem',
+      minHeight: '50px'
+    }),
+    menu: (provided) => ({
+      ...provided,
+      zIndex: 9999,
+    }),
+    menuList: (provided) => ({
+      ...provided,
+      maxHeight: '200px', 
+    })
+  };
   
   return (
     <Dialog open={open}>
@@ -342,12 +405,27 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
         <form onSubmit={(e) => e.preventDefault()}>
           <Stack sx={{width: '100%', minWidth: { xs: '300px', sm: '360px', md: '400px'}, gap: '1.5rem'}}>
             {columns.filter(col => !(col.accessorKey === "email_1" || col.accessorKey === "email_2" || col.accessorKey === "id" || col.accessorKey === "num_vols")).map((column) => (
-              <TextField
-                key={column.accessorKey}
+              <div key={column.accessorKey || column.id}>
+                {column.id === 'type' ? (
+                  <Select
+                  label = "Shift Type"
+                  id="type"
+                  placeholder='Shift Type'
+                  isMulti
+                  options={shiftType}
+                  name={column.id}
+                  onChange={(e) => setValues({...values, 'type': e})}
+                  styles={customSelectStyles}
+                  />
+                ):(
+              <TextField sx={{width: '100%', minWidth: { xs: '300px', sm: '360px', md: '400px'}, gap: '1.5rem'}} // All inputs are same size as Shift Type
+                //key={column.accessorKey}
                 label={column.header}
                 name={column.accessorKey}
                 onChange={(e) => setValues({...values, [e.target.name]: e.target.value})}
               />
+                )}
+              </div>
               ))}
           </Stack>
         </form>
