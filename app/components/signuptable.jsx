@@ -1,6 +1,7 @@
 'use client'
 import { useCallback, useMemo, useState } from 'react'
 import MaterialReactTable from "material-react-table"
+import { download, generateCsv, mkConfig } from 'export-to-csv';
 
 // According to MUI docs this imports faster than doing: import { Box, Button, ... } from '@mui/material'
 // More info: https://mui.com/material-ui/guides/minimizing-bundle-size/
@@ -195,6 +196,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
       },
       {
         id: 'type', 
+        accessorKey: 'type',
         accessorFn: (row) => typeof row.shift_type === 'string' ? row.shift_type : row.shift_type.join(', '),        
         header: 'Shift Type',
         enableEditing: false
@@ -243,6 +245,31 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
       ],
       [],
     )
+
+  const conf = {
+    fieldSeparator: ',',
+    quoteStrings: '"',
+    decimalSeparator: '.',
+    showLabels: true,
+    useBom: true,
+    useKeysAsHeaders: true,
+    headers: columns.map((c) => c.header),
+  };
+  const csvConfig = mkConfig(conf);
+
+
+  
+  const handleExportData = () => {
+    const csv = generateCsv(csvConfig)(tableData)
+    download(csvConfig)(csv)
+  }
+
+  const handleExportSelectedRows = (rows) => {
+    const csv = generateCsv(csvConfig)(rows.map((r) => r.original))
+    download(csvConfig)(csv)
+  }
+
+  
   return (
     <div>
       <h2 className="p-4 text-white">Signups Table</h2>
@@ -279,7 +306,9 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
         )}
         renderTopToolbarCustomActions={({table}) => (
           <Box>
-          <Button color="primary" onClick={() => setCreateModalOpen(true)} variant="contained">Create New Signup</Button>
+            <Button color="primary" onClick={() => setCreateModalOpen(true)} variant="contained">Create New Signup</Button>
+            <Button sx={{marginX: 5}} disabled={tableData.length == 0} color="primary" onClick={handleExportData} variant="contained">Export All Data</Button>
+            <Button disabled={table.getSelectedRowModel().rows.length == 0} color="primary" onClick={() => handleExportSelectedRows(table.getSelectedRowModel().rows)} variant="contained">Export Selected Rows</Button>
           </Box>
         )}
         /*renderTopToolbarCustomActions={() => (

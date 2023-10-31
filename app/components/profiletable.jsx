@@ -1,12 +1,12 @@
 'use client'
 import { useCallback, useMemo, useState } from 'react'
 import MaterialReactTable from "material-react-table"
-import Loading from '../loading'
-
+import { mkConfig, download, generateCsv } from 'export-to-csv'
 // According to MUI docs this imports faster than doing: import { Box, Button, ... } from '@mui/material'
 // More info: https://mui.com/material-ui/guides/minimizing-bundle-size/
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
+import Button from '@mui/material/Button'
 import Tooltip from '@mui/material/Tooltip'
 import Delete from '@mui/icons-material/Delete'
 import Edit from '@mui/icons-material/Edit'
@@ -226,6 +226,27 @@ const Profiletable = ( {profiles, signups} ) => {
     [getCommonEditTextFieldProps],
   )
 
+  const conf = {
+    fieldSeparator: ',',
+    quoteStrings: '"',
+    decimalSeparator: '.',
+    showLabels: true,
+    useBom: true,
+    useKeysAsHeaders: true,
+    headers: columns.map((c) => c.header),
+  };
+  const csvConfig = mkConfig(conf);
+  
+  const handleExportData = () => {
+    const csv = generateCsv(csvConfig)(tableData)
+    download(csvConfig)(csv)
+  }
+
+  const handleExportSelectedRows = (rows) => {
+    const csv = generateCsv(csvConfig)(rows.map((r) => r.original))
+    download(csvConfig)(csv)
+  }
+
   return (
     <div>
       <h2 className="p-4 text-white">Profiles Table</h2>
@@ -259,6 +280,12 @@ const Profiletable = ( {profiles, signups} ) => {
                 <Delete />
               </IconButton>
             </Tooltip>
+          </Box>
+        )}
+        renderTopToolbarCustomActions={({table}) => (
+          <Box>
+            <Button sx={{marginRight: 5}} disabled={tableData.length == 0} color="primary" onClick={handleExportData} variant="contained">Export All Data</Button>
+            <Button disabled={table.getSelectedRowModel().rows.length == 0} color="primary" onClick={() => handleExportSelectedRows(table.getSelectedRowModel().rows)} variant="contained">Export Selected Rows</Button>
           </Box>
         )}
       />
