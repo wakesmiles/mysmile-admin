@@ -131,7 +131,7 @@ const Shiftstable = ( {signups, shifts} ) => {
   }
     
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
-    values.type = editedType.map((type) => type.label)
+    values.type = editedType.map((type) => type.value)
     tableData[row.index] = values
     console.log(values)
     update(values)  // API UPDATE request
@@ -212,6 +212,7 @@ const Shiftstable = ( {signups, shifts} ) => {
   ]; // Different types of shifts
 
   const handleShiftTypeUpdate = (updatedValues) => {
+    console.log(updatedValues)
     setEditedType(updatedValues)
   }
 
@@ -403,8 +404,8 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
     {value: 'volunteer', label: 'Volunteer'},
     {value: 'orientation', label: 'Orientation'}, 
     {value: 'pre-dental', label: 'Pre-Dental'},
-    {value: 'dental assistant I', label: 'Dental Assistant I'}, 
-    {value: 'dental assistant II', label: 'Dental Assistant II'},
+    {value: 'dental assistant i', label: 'Dental Assistant I'}, 
+    {value: 'dental assistant ii', label: 'Dental Assistant II'},
     {value: 'registered dental hygienist', label: 'Registered Dental Hygienist'},
     {value: 'dentist', label: 'Dentist'},
     {value: 'admin', label: 'Admin'},
