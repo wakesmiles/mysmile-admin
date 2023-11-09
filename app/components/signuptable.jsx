@@ -307,7 +307,7 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
         renderTopToolbarCustomActions={({table}) => (
           <Box>
             <Button color="primary" onClick={() => setCreateModalOpen(true)} variant="contained">Create New Signup</Button>
-            <Button sx={{marginX: 5}} color="primary" onClick={handleExportData} variant="contained">Export All Data</Button>
+            <Button sx={{marginX: 5}} disabled={tableData.length == 0} color="primary" onClick={handleExportData} variant="contained">Export All Data</Button>
             <Button disabled={table.getSelectedRowModel().rows.length == 0} color="primary" onClick={() => handleExportSelectedRows(table.getSelectedRowModel().rows)} variant="contained">Export Selected Rows</Button>
           </Box>
         )}
