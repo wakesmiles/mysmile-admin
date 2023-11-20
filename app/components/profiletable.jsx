@@ -137,6 +137,7 @@ const Profiletable = ( {profiles, signups} ) => {
     }
   )
   const shiftType = ['Volunteer', 'Orientation', 'Pre-Dental', 'Dental Assistant I', 'Dental Assistant II', 'Registered Dental Hygienist', 'Dentist', 'Admin', 'Interpreter']; // Different types of shifts
+  const boolType = ['true', 'false'];
 
   const columns = useMemo( // input data for the table library
     () => [
@@ -206,7 +207,13 @@ const Profiletable = ( {profiles, signups} ) => {
         accessorKey: 'orientation',
         header: 'Oriented',
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-          ...getCommonEditTextFieldProps(cell)
+          ...getCommonEditTextFieldProps(cell),
+          select: true,
+          children: boolType.map((bool) => (
+            <MenuItem key={bool} value ={bool}>
+              {bool.charAt(0).toUpperCase() + bool.slice(1)}
+            </MenuItem>
+          ))
         })
       },
       {
