@@ -11,13 +11,11 @@ import Tooltip from '@mui/material/Tooltip'
 import Delete from '@mui/icons-material/Delete'
 import Edit from '@mui/icons-material/Edit'
 import APIMessage from './apimsg'
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
+
 import { supabase } from '@/supabaseClient'
 import { states } from '../states.jsx'
-import { FormControl, InputLabel} from '@mui/material'
+
 import '../../styles/table.css'
-import { urlToHttpOptions } from 'url'
 
 const Profiletable = ( {profiles, signups} ) => {
   
