@@ -24,7 +24,7 @@ const FoldersTable = ({ folders }) => {
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                             </svg>
                         </div>
-                        <input type="search" ref={searchRef} id="default-search" onChange={searchChange} class="shadow bg-neutral-900 block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search Folders" />
+                        <input type="search" ref={searchRef} id="default-search" onChange={searchChange} class="shadow bg-neutral-900 block w-full p-4 pl-10 text-sm text-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search Folders" />
                     </div>
                 </div>
                 <div className="shadow max-h-[35rem] w-4/5 overflow-y-scroll border-transparent bg-neutral-900 border-2 border-neutral-800 grid-cols-2 px-5 py-5 rounded-b-xl">
