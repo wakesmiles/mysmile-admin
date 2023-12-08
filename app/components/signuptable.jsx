@@ -195,9 +195,9 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
         enableEditing: false
       },
       {
-        id: 'type', 
-        accessorKey: 'type',
-        accessorFn: (row) => typeof row.shift_type === 'string' ? row.shift_type : row.shift_type.join(', '),        
+        id: 'shift_type', 
+        accessorKey: 'shift_type',
+        accessorFn: (row) => typeof row.shift_type === 'string' ? row.shift_type : row.shift_type.join(', '), 
         header: 'Shift Type',
         enableEditing: false
       },
