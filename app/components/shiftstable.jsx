@@ -35,17 +35,15 @@ const Shiftstable = ( {signups, shifts} ) => {
   const [volunteerModalMsg, setVolunteerModalMsg] = useState("")
   const [apiMsgOpen, setApiMsgOpen] = useState(false)  
   const [apiResponse, setApiResponse] = useState("")
-  const [editedType, setEditedType] = useState([]);
+  const [editedType, setEditedType] = useState([])
 
   const data = []
   const signup_data = signups.data
   const shifts_data = shifts.data
 
-  let latest_id = 0  // variable to find most recent ID
   shifts_data.forEach(shift => {  // create an object that gets info from database and generate info for table
     let obj = {}
     obj.id = shift.id  // only stored in data, not displayed in MUI table
-    latest_id = Math.max(latest_id, shift.id)
     obj.type = shift.shift_type.sort()
     obj.date = shift.shift_date
     obj.start_time = shift.start_time
@@ -72,15 +70,20 @@ const Shiftstable = ( {signups, shifts} ) => {
   const [tableData, setTableData] = useState(data)
 
   async function post(values) {  // POST request
+    const { data, error } = await supabase.from('shifts').select('id').order('id', {ascending: false}).limit(1)
+    let id = 0
+    if (data) {
+      id = data[0].id
+    }
     const new_shift = {
-      id: latest_id + 1,
+      id: id + 1,
       shift_type: values.type.map((type) => type.toLowerCase()),
       shift_date: values.date,
       start_time: values.start_time + ".000Z",
       end_time: values.end_time + ".000Z",
       remaining_slots: +values.remaining_slots
     }
-    latest_id++  // this allows adding shifts without having to refresh
+
     try {
       const { error } = await supabase.from("shifts").insert(new_shift)
       if (error) {
@@ -95,8 +98,12 @@ const Shiftstable = ( {signups, shifts} ) => {
     }
   }
 
-  const handleCreateNewRow = (values) => {
-    values.id = latest_id + 1
+  const handleCreateNewRow = async (values) => {
+    const { data, error } = await supabase.from('shifts').select('id').order('id', {ascending: false}).limit(1)
+    values.id = 0
+    if (data) {
+      values.id = data[0].id
+    }
     values.num_vols = 0
     values.type = values.type.map(type => type.label.toLowerCase())
     post(values)  // API Post request
