@@ -36,12 +36,10 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
   const signup_data = signups.data
   const shifts_data = shifts.data
 
-  let latest_id = 0
 
   signup_data.forEach(signup => { 
     let obj = {}
     obj.id = signup.id
-    latest_id = Math.max(latest_id, signup.id)
     obj.shiftid = signup.shift_id
     obj.userid = signup.user_id
     obj.first_name = signup.first_name
@@ -70,18 +68,22 @@ const Signuptable = ( {profiles, signups, shifts} ) => {
 
     // find user for given id
     let volunteer_for_given_info = profiles_data.filter(vol => (vol.first_name === values.first_name && vol.last_name === values.last_name && vol.email === values.email))[0]
-
+    
+    const { data, error } = await supabase.from('signups').select('id').order('id', {ascending: false}).limit(1)
+    let id = 0
+    if (data) {
+      id = data[0].id
+    }
     const new_signup = {
       first_name: values.first_name,
       last_name: values.last_name,
       email: values.email,
-      id: latest_id+1,
+      id: id+1,
       shift_id: (shift_for_given_date && shift_for_given_date.remaining_slots > 0)? shift_for_given_date.id : "No open shift found with this date and time",  // check if there is an open shift for this date
       user_id: volunteer_for_given_info ? volunteer_for_given_info.id : "No volunteer found with this name and/or email",
       clock_in: null,
       clock_out: null
     }
-    latest_id++  // allows for creating multiple signup at once
 
     try {
       const { error } = await supabase.from("signups").insert(new_signup)
